@@ -1,49 +1,14 @@
 
 import React from 'react';
 import { Grid, Image, Button, Dropdown, Form } from 'semantic-ui-react';
-import _ from 'lodash'
-import { } from 'semantic-ui-react'
+import _ from 'lodash';
+import { } from 'semantic-ui-react';
+import FormRead from './FormRead.jsx';
+import FormUpdate from './FormUpdate.jsx';
+import FormCreate from './FormCreate.jsx';
+import FormDelete from './FormDelete.jsx';
 
 
-const FormCreate = () => (
-  <Form unstackable>
-    <Form.Group widths={2}>
-      <Form.Input control='textarea' rows='10' label='Create IOC' placeholder='[{"ioc":"1.1.1.1", "type":"ip", "case":"brown", "analyst":"nancy", "notes":"potentially used in CnC"}, {...}, {...}]' />
-    </Form.Group>
-    <Button type='submit'>Submit</Button>
-  </Form>
-)
-
-
-
-const FormRead = () => (
-  <Form unstackable>
-    <Form.Group widths={2}>
-      <Form.Input control='textarea' rows='5' label='Read IOC' placeholder='{"type":"domain"}' />
-    </Form.Group>
-    <Button type='submit'>Submit</Button>
-  </Form>
-)
-
-
-const FormUpdate = () => (
-  <Form unstackable>
-    <Form.Group widths={2}>
-      <Form.Input control='textarea' rows='10' label='Update IOC' placeholder='[{"id":"71281621", "notes":"updated notes"}, {"id":"3321", "case": "brownie"}]' />
-    </Form.Group>
-    <Button type='submit'>Submit</Button>
-  </Form>
-)
-
-
-const FormDelete = () => (
-  <Form unstackable>
-    <Form.Group widths={2}>
-      <Form.Input control='textarea' rows='10' label='Delete IOC' placeholder='[{"id":"1213432"},{"type":"unknown"}]' />
-    </Form.Group>
-    <Button type='submit'>Submit</Button>
-  </Form>
-)
 
 
 

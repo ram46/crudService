@@ -41,11 +41,11 @@ function restrict() {
 
 function getItems(req, res) {
   // req.params.id
+}
 
 function findIOC(req, res) {
   console.log(req.params);
 }
-
 
 
 var port = process.env.PORT || 5001;
