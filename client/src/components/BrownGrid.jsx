@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { Grid, Image, Button, Dropdown, Form } from 'semantic-ui-react';
-import _ from 'lodash'
-import { } from 'semantic-ui-react'
+import _ from 'lodash';
+import { } from 'semantic-ui-react';
 import FormRead from './FormRead.jsx';
 import FormUpdate from './FormUpdate.jsx';
-import FormCreate from './FormCreate.jsx'
-import FormDelete from './FormDelete.jsx'
+import FormCreate from './FormCreate.jsx';
+import FormDelete from './FormDelete.jsx';
 
 
 

@@ -28,6 +28,10 @@ function monitor(req,res) {
   })
 }
 
+function readioc(req, res) {
+  ioc = req.body
+  console.log(ioc)
+}
 
 function restrict() {
 // code here if cookie is verified
