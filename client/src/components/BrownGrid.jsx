@@ -3,7 +3,7 @@ import React from 'react';
 import { Grid, Image, Button, Dropdown, Form } from 'semantic-ui-react';
 import _ from 'lodash'
 import { } from 'semantic-ui-react'
-
+import FormRead from './FormRead.jsx'
 
 const FormCreate = () => (
   <Form unstackable>
@@ -15,15 +15,6 @@ const FormCreate = () => (
 )
 
 
-
-const FormRead = () => (
-  <Form unstackable>
-    <Form.Group widths={2}>
-      <Form.Input control='textarea' rows='5' label='Read IOC' placeholder='{"type":"domain"}' />
-    </Form.Group>
-    <Button type='submit'>Submit</Button>
-  </Form>
-)
 
 
 const FormUpdate = () => (

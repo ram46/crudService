@@ -37,14 +37,6 @@ function restrict() {
 // else redirect to login page
 }
 
-function getItems(req, res) {
-  // req.params.id
-}
-
-
-function getProducts(arg, restrict, cb) {
-
-}
 
 
 function login(username, password) {
