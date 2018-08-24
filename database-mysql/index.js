@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 try {
-  var config = require('./config.js')
+  var config = require('../config.js')
 }
 
 
