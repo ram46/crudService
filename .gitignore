@@ -1,3 +1,6 @@
+#Config
+config.js
+
 # Database
 database-mongo/data/*
 !database-mongo/data/.gitkeep
