@@ -14,11 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +*/
 
 app.get('/monitor', monitor);
-<<<<<<< HEAD
 app.post('/readioc', readioc)
-=======
 app.get('/find/:case/:type', findIOC);
->>>>>>> 6943387be3933636a0f4b0861562e2cc6394adc6
+
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
   API Route Functions
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
@@ -30,7 +28,6 @@ function monitor(req,res) {
   })
 }
 
-<<<<<<< HEAD
 function readioc(req, res) {
   ioc = req.body
   console.log(ioc)
@@ -44,10 +41,9 @@ function restrict() {
 
 function getItems(req, res) {
   // req.params.id
-=======
+
 function findIOC(req, res) {
   console.log(req.params);
->>>>>>> 6943387be3933636a0f4b0861562e2cc6394adc6
 }
 
 
