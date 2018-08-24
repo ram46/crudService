@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +*/
 
 app.get('/monitor', monitor);
-
+app.post('/readioc', readioc)
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
   API Route Functions
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
@@ -26,6 +26,10 @@ function monitor(req,res) {
   })
 }
 
+function readioc(req, res) {
+  ioc = req.body
+  console.log(ioc)
+}
 
 function restrict() {
 // code here if cookie is verified
