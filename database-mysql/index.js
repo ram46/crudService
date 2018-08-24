@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 
+
 try {
   var config = require('../config.js')
 }
@@ -27,6 +28,17 @@ try {
 }
 
 
+const IOC = sequelize.define('ioc', {
+  ioc: Sequelize.STRING,
+  type: Sequelize.STRING,
+  analyst:  Sequelize.STRING,
+  notes: Sequelize.TEXT,
+  case: {type: Sequelize.STRING, unique: true, allowNull: true},
+  version: {type: Sequelize.INTEGER},
+});
+
+IOC.sync();
+
 // sequelize
 //   .authenticate()
 //   .then(() => {
@@ -39,3 +51,4 @@ try {
 
 
 module.exports.sequelize = sequelize;
+module.exports.IOC = IOC;
