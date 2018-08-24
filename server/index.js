@@ -5,8 +5,8 @@ var app = express();
 
 app.use(express.static(__dirname + '/../client/dist'));
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -15,6 +15,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 
 app.get('/monitor', monitor);
 app.post('/readioc', readioc)
+app.get('/find/:case/:type', findIOC);
+
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
   API Route Functions
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
@@ -26,10 +28,6 @@ function monitor(req,res) {
   })
 }
 
-function readioc(req, res) {
-  ioc = req.body
-  console.log(ioc)
-}
 
 function restrict() {
 // code here if cookie is verified
@@ -37,16 +35,14 @@ function restrict() {
 // else redirect to login page
 }
 
-
-
-function login(username, password) {
-  // req.body
+function getItems(req, res) {
+  // req.params.id
 }
 
-
-function signup() {
-
+function findIOC(req, res) {
+  console.log(req.params);
 }
+
 
 var port = process.env.PORT || 5001;
 

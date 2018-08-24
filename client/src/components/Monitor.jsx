@@ -1,11 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import $ from 'jquery';
 
-
-import BrownGrid from './BrownGrid.jsx'
-
-class App extends React.Component {
+class Monitor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,9 +25,9 @@ class App extends React.Component {
 
   render() {
     return (<div>
-      <BrownGrid />
+      {this.state.services}
     </div>)
   }
 }
 
-export default App
+export default Monitor
