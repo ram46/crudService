@@ -2,68 +2,89 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import List from './ListServices.jsx';
-import { Grid, Image, Button, Dropdown } from 'semantic-ui-react';
+import { Grid, Image, Button, Dropdown, Form } from 'semantic-ui-react';
 import _ from 'lodash'
 import { } from 'semantic-ui-react'
 import TableSelectableRow from './TableSelectableRow.jsx'
 
-const caseSensitiveSearch = (options, query) => {
-  const re = new RegExp(_.escapeRegExp(query))
-}
 
-const case_options = [
-  { key: 'a', value: 'a', text: 'all' },
-  { key: 'b', value: 'b', text: 'case-abc' },
-  { key: 'c', value: 'c', text: 'case-mini' },
-]
-
-const type_options = [
-  { key: 'a', value: 'a', text: 'all' },
-  { key: 'b', value: 'b', text: 'ip' },
-  { key: 'c', value: 'c', text: 'domain' },
-  { key: 'c', value: 'c', text: 'os-version' },
-]
-const DropdownExampleCustomSearchFunction = (props) => (
-  <Dropdown
-
-    options={props.options}
-    placeholder={'Try to search for case or CASE'}
-    search={caseSensitiveSearch}
-    selection
-  />
+const FormCreate = () => (
+  <Form unstackable>
+    <Form.Group widths={2}>
+      <Form.Input control='textarea' rows='10' label='Create IOC' placeholder='[{"ioc":"1.1.1.1", "type":"ip", "case":"brown", "analyst":"nancy", "notes":"potentially used in CnC"}, {...}, {...}]' />
+    </Form.Group>
+    <Button type='submit'>Submit</Button>
+  </Form>
 )
 
 
 
+const FormRead = () => (
+  <Form unstackable>
+    <Form.Group widths={2}>
+      <Form.Input control='textarea' rows='5' label='Read IOC' placeholder='{"type":"domain"}' />
+    </Form.Group>
+    <Button type='submit'>Submit</Button>
+  </Form>
+)
+
+
+const FormUpdate = () => (
+  <Form unstackable>
+    <Form.Group widths={2}>
+      <Form.Input control='textarea' rows='10' label='Update IOC' placeholder='[{"id":"71281621", "notes":"updated notes"}, {"id":"3321", "case": "brownie"}]' />
+    </Form.Group>
+    <Button type='submit'>Submit</Button>
+  </Form>
+)
+
+
+const FormDelete = () => (
+  <Form unstackable>
+    <Form.Group widths={2}>
+      <Form.Input control='textarea' rows='10' label='Delete IOC' placeholder='[{"id":"1213432"},{"type":"unknown"}]' />
+    </Form.Group>
+    <Button type='submit'>Submit</Button>
+  </Form>
+)
+
+
+
+const DividerExampleInverted = () => (
+  <Segment inverted>
+    <Divider inverted />
+    <Divider vertical>
+    </Divider>
+  </Segment>
+)
 
 
 const BrownGrid = () => (
-  <Grid celled>
+  <Grid columns={2} divided celled>
     <Grid.Row>
-      <Grid.Column width={2}>
-        <Image circular src='brown3_lrge.png' />
+      <Grid.Column>
+        <Image src='brown3_lrge.png' size='small' circular />
+        <FormCreate />
       </Grid.Column>
-      <Grid.Column width={14}>
-        <input type="text" id="fname" name="fname" />
-        <DropdownExampleCustomSearchFunction options={case_options}/>
-         <Button inverted color='brown' content='Search...' />
-
-        <DropdownExampleCustomSearchFunction options={type_options}/>
-         <Button inverted color='brown' content='Search...' />
+      <Grid.Column>
+        <Image src='brown3_lrge.png' size='small' circular/>
+        <FormRead />
       </Grid.Column>
-
     </Grid.Row>
 
     <Grid.Row>
-      <Grid.Column width={10}>
-        table would appear here
-        <TableSelectableRow />
+      <Grid.Column>
+        <Image src='brown3_lrge.png' size='small' circular/>
+        <FormUpdate />
+      </Grid.Column>
+      <Grid.Column>
+        <Image src='brown3_lrge.png' size='small' circular/>
+        <FormDelete />
       </Grid.Column>
     </Grid.Row>
   </Grid>
+
 )
-
-
 
 class App extends React.Component {
   constructor(props) {
