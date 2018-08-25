@@ -14,7 +14,6 @@ class FormUpdate extends React.Component {
     this.state = {
       afterUpdateView: false,
       inputData: null,
-      outputData:null
     }
   }
 
@@ -36,7 +35,6 @@ class FormUpdate extends React.Component {
       context: self,
       success: function(data) {
         this.setState({
-          outputData: data,
           afterUpdateView: true,
          })
       },
@@ -58,17 +56,20 @@ class FormUpdate extends React.Component {
     var button;
 
     if (!this.state.afterUpdateView) {
-      button = <Button type='submit'onClick={this.handleClick} >Submit</Button>
+      button = <Button type='submit' id="submitButton" onClick={this.handleClick} >Submit</Button>
       content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange}  control='textarea' rows='10' label='Update IOC' placeholder='{"newValue": {"ioc": "2.2.2.2"}, "where":  {"where": {"ioc" : "5.5.5.5"} }}' /> </Form.Group> {button} </Form>
     }
 
 
     if (this.state.afterUpdateView) {
-      content = <textarea rows="4" cols="50"> ioc has been updated</textarea>
+      button = <Button type="submit" id="backButton" onClick={this.handleClick}> Back </Button>
+      content = <div> <p> ioc has been updated </p> {button} </div>
     }
 
-    return content
-      }
+    return (
+      <div> {content} </div>
+      )
+    }
   }
 
 
