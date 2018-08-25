@@ -42,9 +42,6 @@ class FormUpdate extends React.Component {
 
       }
     })
-
-
-
   }
 
   handleKeyPress(event) {
