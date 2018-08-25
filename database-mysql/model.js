@@ -1,16 +1,29 @@
 const IOC = require('./index.js').IOC
 
 module.exports = {
-  create_iocs: function(iocs) {
+  create: function(iocs) {
 
   },
 
-  read_iocs: function(iocs) {
+  read: function(filter, cb) {
+    //IOC.findAll({where: {}}).then( (result) => {
 
+    filter = filter || {}
+
+    console.log(filter)
+    IOC.findAll({where: filter}).then( (result) => {
+      cb(null, result);
+    }).catch( (err) => {
+      cb(err, null);
+    })
   },
 
 
-  modify_iocs: function(iocs) {
+  update: function(iocs) {
+
+  },
+
+  delete: function(iocs) {
 
   }
 }
