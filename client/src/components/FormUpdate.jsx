@@ -64,7 +64,7 @@ class FormUpdate extends React.Component {
 
 
     if (this.state.afterUpdateView) {
-      content = <textarea rows="4" cols="50"> {this.state.outputData}</textarea>
+      content = <textarea rows="4" cols="50"> ioc has been updated</textarea>
     }
 
     return content
