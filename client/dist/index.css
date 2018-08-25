@@ -24,3 +24,7 @@ body {
 .validJSON {
   border: 1px solid green;
 }
+
+p {
+  color: green;
+}

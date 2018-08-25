@@ -45,9 +45,6 @@ function createioc(req, res) {
 
 
 function readioc(req, res) {
-
-  console.log("****************")
-  console.log(req.body)
   var filter = JSON.parse(req.body.query);
   db.read(filter, (error, result) => {
     res.send(result);
@@ -57,7 +54,10 @@ function readioc(req, res) {
 
 
 function updateioc(req, res) {
-
+  var query = JSON.parse(req.body.query);
+  db.update(query, (error, result) => {
+    res.send(result);
+  })
 }
 
 function deleteioc(req, res) {

@@ -48,6 +48,7 @@ class FormRead extends React.Component {
 
     var self = this;
 
+    // set the state in both cases whether a back button or a submit button is clicked
     this.setState({
       tableView: !this.state.tableView
     })
@@ -98,12 +99,12 @@ class FormRead extends React.Component {
 
     if (this.state.tableView)
     {
-      button = <Button type="submit" id="submitBtn" onClick={this.handleClick}> Back </Button>
+      button = <Button type="submit" id="backBtn" onClick={this.handleClick}> Back </Button>
       content = <div> <TableRows iocs={this.state.outputData}/> {button} </div>
     }
 
     return (
-        content
+      <div> {content} </div>
       )
     }
   }
