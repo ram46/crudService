@@ -10,3 +10,17 @@ input[type=text] {
 body {
   background: #fcf7ef
 }
+
+.scrollmenu {
+    background-color: #333;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.invalidJSON {
+  border: 1px solid red;
+}
+
+.validJSON {
+  border: 1px solid green;
+}
