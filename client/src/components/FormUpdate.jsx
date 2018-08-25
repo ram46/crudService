@@ -12,7 +12,7 @@ class FormUpdate extends React.Component {
     this.handleKeyPress = this.handleKeyPress.bind(this)
 
     this.state = {
-      afterUpdateView: false,
+      resultView: false,
       inputData: null,
     }
   }
@@ -25,18 +25,21 @@ class FormUpdate extends React.Component {
   }
 
   handleClick(event) {
-    debugger
-
     var self = this;
+
+    // toggle the view in both cases whether a back button or a submit button is clicked
+    this.setState({
+      resultView: !this.state.resultView
+    })
+
+
     $.ajax({
       url: 'updateioc',
       method: 'POST',
       data: {query: this.state.inputData},
       context: self,
       success: function(data) {
-        this.setState({
-          afterUpdateView: true,
-         })
+        // no proper data
       },
       error: function(err) {
 
@@ -45,20 +48,20 @@ class FormUpdate extends React.Component {
   }
 
   handleKeyPress(event) {
-
+    if (e.keyCode === 13 || e.which === 13) this.handleClick(e)
   }
 
   render() {
     var content;
     var button;
 
-    if (!this.state.afterUpdateView) {
+    if (!this.state.resultView) {
       button = <Button type='submit' id="submitButton" onClick={this.handleClick} >Submit</Button>
       content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange}  control='textarea' rows='10' label='Update IOC' placeholder='{"newValue": {"ioc": "2.2.2.2"}, "where":  {"where": {"ioc" : "5.5.5.5"} }}' /> </Form.Group> {button} </Form>
     }
 
 
-    if (this.state.afterUpdateView) {
+    if (this.state.resultView) {
       button = <Button type="submit" id="backButton" onClick={this.handleClick}> Back </Button>
       content = <div> <p> ioc has been updated </p> {button} </div>
     }
