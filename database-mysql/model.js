@@ -23,19 +23,28 @@ module.exports = {
   },
 
 
-  update: function(query, cb) {
+  update: function(newValue, filter, cb) {
     // var query = {"newValue": {"ioc": "3.3.2.2"}, "where":  {"where": {"ioc" : "2.2.2.2"} }}
 
-    IOC.update(query.newValue, query.where).then((result) => {
-      // cb(null, result)
-    }).spread((affectedCount, affectedRows) => {
-        return IOC.findAll();
-    }).then(iocs => {
+
+    IOC.update(newValue, {where:filter})
+    .then(iocs => {
       cb(null, iocs)
-      console.log(iocs, affectedCount)
     }).catch((err) => {
       cb(err, null);
     })
+
+
+    // IOC.update(query.newValue, query.where).then((result) => {
+    //   // cb(null, result)
+    // }).spread((affectedCount, affectedRows) => {
+    //     return IOC.findAll();
+    // }).then(iocs => {
+    //   cb(null, iocs)
+    //   console.log(iocs, affectedCount)
+    // }).catch((err) => {
+    //   cb(err, null);
+    // })
 
 
   },
@@ -49,10 +58,5 @@ module.exports = {
   }
 
 }
-
-
-// var query = {"newValue": {"ioc": "3.2.3.2"}, "where":  {"where": {"ioc" : "4.4.4.4"} }}
-// module.exports.update(query, () => {})
-
 
 

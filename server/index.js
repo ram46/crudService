@@ -62,7 +62,7 @@ function readioc(req, res) {
 
 function updateioc(req, res) {
   var query = JSON.parse(req.body.query);
-  db.update(query, (error, result) => {
+  db.update(query.newValues, query.where, (error, result) => {
     if (error) res.send(ERROR_MSG);
     if (result) res.send(SUCCESS_MSG);
   })
@@ -81,4 +81,6 @@ var port = process.env.PORT || 5001;
 app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
+
+
 
