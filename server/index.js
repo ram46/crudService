@@ -19,6 +19,8 @@ app.post('/createioc', createioc)
 app.post('/readioc', readioc)
 app.post('/updateioc', updateioc)
 app.post('/deleteioc', deleteioc)
+const SUCCESS_MSG = 'transaction succeeded';
+const ERROR_MSG = 'transaction failed'
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
   API Route Functions
@@ -38,16 +40,21 @@ function monitor(req,res) {
 }
 
 function createioc(req, res) {
-  ioc = req.body
-  console.log(ioc)
+  iocs = JSON.parse(req.body.query);
+  console.log('in the createIOC place', iocs)
+  db.create(iocs, (error, result) => {
+    if (error) res.send(ERROR_MSG);
+    if (result) res.send(SUCCESS_MSG);
+  })
 }
-
 
 
 function readioc(req, res) {
   var filter = JSON.parse(req.body.query);
+  console.log('**** called /readioc')
   db.read(filter, (error, result) => {
-    res.send(result);
+    if (error) res.send(ERROR_MSG);
+    if (result) res.send(result);
   })
 
 }
@@ -55,13 +62,18 @@ function readioc(req, res) {
 
 function updateioc(req, res) {
   var query = JSON.parse(req.body.query);
-  db.update(query, (error, result) => {
-    res.send(result);
+  db.update(query.newValues, query.where, (error, result) => {
+    if (error) res.send(ERROR_MSG);
+    if (result) res.send(SUCCESS_MSG);
   })
 }
 
 function deleteioc(req, res) {
-
+  var filter = JSON.parse(req.body.query);
+  db.delete(filter, (error, result) => {
+    if (error) res.send(ERROR_MSG);
+    if (result) res.send(SUCCESS_MSG);
+  })
 }
 
 var port = process.env.PORT || 5001;
@@ -69,4 +81,6 @@ var port = process.env.PORT || 5001;
 app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
+
+
 
