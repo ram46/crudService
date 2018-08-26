@@ -10,7 +10,7 @@ class FormUpdate extends React.Component {
     this.handleChange  = this.handleChange.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.handleKeyPress = this.handleKeyPress.bind(this)
-
+    this.callAPI = this.callAPI.bind(this)
     this.state = {
       resultView: false,
       inputData: null,
@@ -24,6 +24,25 @@ class FormUpdate extends React.Component {
     })
   }
 
+  callAPI(endpoint) {
+    $.ajax({
+      url: endpoint,
+      method: 'POST',
+      data: {query: this.state.inputData},
+      context: self,
+      success: function(data) {
+        // no proper data
+      },
+      error: function(err) {
+      }
+    })
+  }
+
+
+  validateJSONInput() {
+    //
+  }
+
   handleClick(event) {
     var self = this;
 
@@ -32,19 +51,7 @@ class FormUpdate extends React.Component {
       resultView: !this.state.resultView
     })
 
-
-    $.ajax({
-      url: 'updateioc',
-      method: 'POST',
-      data: {query: this.state.inputData},
-      context: self,
-      success: function(data) {
-        // no proper data
-      },
-      error: function(err) {
-
-      }
-    })
+    this.callAPI('updateioc')
   }
 
   handleKeyPress(event) {
