@@ -1,9 +1,12 @@
 const IOC = require('./index.js').IOC
 
 module.exports = {
-  create: function(iocs) {
-    // iocs is an array
-    IOC.bulkCreate(iocs)
+  create: function(iocs, cb) {
+    IOC.bulkCreate(iocs).then( (result) => {
+      cb(null, result);
+    }).catch( (err) => {
+      cb(err, null);
+    })
   },
 
   read: function(filter, cb) {

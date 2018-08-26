@@ -38,10 +38,13 @@ function monitor(req,res) {
 }
 
 function createioc(req, res) {
-  ioc = req.body
-  console.log(ioc)
+  iocs = JSON.parse(req.body.query);
+  console.log('in the createIOC place', iocs)
+  db.create(iocs, (error, result) => {
+    if (error) res.send(error);
+    if (result) res.send('sdsds');
+  })
 }
-
 
 
 function readioc(req, res) {
