@@ -19,7 +19,7 @@ class App extends React.Component {
   render() {
     return (<div>
       <BrownGrid />
-      <Monitor />
+      {/* <Monitor /> */}
     </div>)
   }
 }

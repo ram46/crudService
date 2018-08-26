@@ -1,16 +1,12 @@
 import React from 'react';
 
 class CrudComponent extends React.Component {
-  constructor(props, endpoint) {
+  constructor(props) {
     super(props);
-
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.inputJSONValidator = this.inputJSONValidator.bind(this);
-
-    this.ajaxCall = this.ajaxCall.bind(this)
-    this.endpoint = endpoint;
     this.state = {
       inputData: [],
       resultView: false,
@@ -21,7 +17,11 @@ class CrudComponent extends React.Component {
 
   }
 
-
+ handleClick(e) {
+    this.setState({
+      resultView: !this.state.resultView
+    })
+  }
 
   inputJSONValidator() {
     var input = this.state.inputData;
@@ -47,37 +47,19 @@ class CrudComponent extends React.Component {
   }
 
 
-  handleClick(e) {
-    this.setState({
-      resultView: !this.state.resultView
-    })
+  // handleClick(e) {
+  //   this.setState({
+  //     resultView: !this.state.resultView
+  //   })
 
-    if (e.target.id === 'submitBtn') {
-
-      this.ajaxCall(this.endpoint)
-    }
-  }
+    // if (e.target.id === 'submitBtn') {
 
 
-  ajaxCall(endpoint) {
-    $.ajax({
-      url: endpoint,
-      method: 'POST',
-      data: {query: this.state.inputData},
-      context: self,
-      success: (data) => {
-        this.setState({
-          outputData: data
-        })
-        console.log(data)
-      },
+    //   this.ajaxCall(this.endpoint)
+    // }
+  // }
 
-      error: (err) => {
-        console.log(err)
-      }
 
-    })
-  }
 
 
 

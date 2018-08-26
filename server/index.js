@@ -46,6 +46,7 @@ function createioc(req, res) {
 
 function readioc(req, res) {
   var filter = JSON.parse(req.body.query);
+  console.log('**** called /readioc')
   db.read(filter, (error, result) => {
     res.send(result);
   })
