@@ -11,7 +11,7 @@ class CrudComponent extends React.Component {
       inputData: [],
       resultView: false,
       outputData: [],
-      textAreaStyle: {border: '1px solid red'},
+      textAreaStyle: {border: '1px solid #b35b32'},
       buttonStatus: 'disabled'
     }
 
@@ -29,14 +29,14 @@ class CrudComponent extends React.Component {
     try {
       JSON.parse(input)
       this.setState({
-        textAreaStyle: {border: '1px solid green'},
+        textAreaStyle: {border: '1px solid #009933'},
         buttonStatus: 'enabled'
       })
     }
 
     catch(e) {
       this.setState({
-        textAreaStyle: {border: '1px solid red'},
+        textAreaStyle: {border: '1px solid #b35b32'},
         buttonStatus: 'disabled'
       })
     }
