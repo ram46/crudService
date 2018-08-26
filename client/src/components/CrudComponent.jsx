@@ -47,22 +47,6 @@ class CrudComponent extends React.Component {
   }
 
 
-  // handleClick(e) {
-  //   this.setState({
-  //     resultView: !this.state.resultView
-  //   })
-
-    // if (e.target.id === 'submitBtn') {
-
-
-    //   this.ajaxCall(this.endpoint)
-    // }
-  // }
-
-
-
-
-
   handleChange(e) {
 
     this.setState({
