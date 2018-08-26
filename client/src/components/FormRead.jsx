@@ -103,7 +103,7 @@ class FormRead extends React.Component {
     }
 
     return (
-        content
+        <div> {content} </div>
       )
     }
   }

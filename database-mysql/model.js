@@ -1,16 +1,16 @@
 const IOC = require('./index.js').IOC
 
 module.exports = {
-  create: function(iocs) {
-
+  create: function(iocs, cb) {
+    IOC.bulkCreate(iocs).then( (result) => {
+      cb(null, result);
+    }).catch( (err) => {
+      cb(err, null);
+    })
   },
 
   read: function(filter, cb) {
-    //IOC.findAll({where: {}}).then( (result) => {
-
     filter = filter || {}
-
-    console.log(filter)
     IOC.findAll({where: filter}).then( (result) => {
       cb(null, result);
     }).catch( (err) => {
@@ -19,11 +19,20 @@ module.exports = {
   },
 
 
-  update: function(iocs) {
-
+  update: function(iocNew, iocOld, cb) {
+    IOC.update(iocNew, {where:iocOld}).then((result) => {
+      console.log('sdsdsdsdsdsdsds', result)
+      cb(null, result);
+    }).catch( (err) => {
+      cb(err, null);
+    })
   },
 
-  delete: function(iocs) {
-
+  delete: function(filter, cb) {
+    IOC.destroy({where: filter}).then( (result) => {
+      cb(null, result);
+    }).catch( (err) => {
+      cb(err, null);
+    })
   }
 }

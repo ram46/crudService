@@ -38,16 +38,16 @@ function monitor(req,res) {
 }
 
 function createioc(req, res) {
-  ioc = req.body
-  console.log(ioc)
+  iocs = JSON.parse(req.body.data);
+  console.log('in the createIOC place', iocs)
+  db.create(iocs, (error, result) => {
+    res.send(result);
+  })
 }
 
 
 
 function readioc(req, res) {
-
-  console.log("****************")
-  console.log(req.body)
   var filter = JSON.parse(req.body.query);
   db.read(filter, (error, result) => {
     res.send(result);
@@ -57,11 +57,20 @@ function readioc(req, res) {
 
 
 function updateioc(req, res) {
-
+  var data = JSON.parse(req.body.data);
+  var iocNew = Object.assign({}, data);
+  delete iocNew.where;
+  var iocOld = data.where;
+  db.update(iocNew, iocOld, (error, result) => {
+    res.send(result);
+  })
 }
 
 function deleteioc(req, res) {
-
+  var filter = JSON.parse(req.body.query);
+  db.delete(filter, (error, result) => {
+    res.send(result);
+  })
 }
 
 var port = process.env.PORT || 5001;
