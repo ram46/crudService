@@ -11,11 +11,12 @@ class CrudComponent extends React.Component {
       inputData: [],
       resultView: false,
       outputData: [],
-      classname: 'invalidJSON',
+      textAreaStyle: {border: '1px solid red'},
       buttonStatus: 'disabled'
     }
 
   }
+
 
  handleClick(e) {
     this.setState({
@@ -28,14 +29,14 @@ class CrudComponent extends React.Component {
     try {
       JSON.parse(input)
       this.setState({
-        classname: 'validJSON',
+        textAreaStyle: {border: '1px solid green'},
         buttonStatus: 'enabled'
       })
     }
 
     catch(e) {
       this.setState({
-        classname: 'invalidJSON',
+        textAreaStyle: {border: '1px solid red'},
         buttonStatus: 'disabled'
       })
     }

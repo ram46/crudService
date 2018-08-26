@@ -45,7 +45,7 @@ class FormCreate extends CrudComponent {
 
     if (!this.state.resultView) {
       button = <Button className={this.state.buttonStatus} type='submit' id="submitBtn" onClick={this.handleClick} >Submit</Button>
-      content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange} className={this.state.classname} control='textarea' rows='10' label='Create IOC' placeholder='[{"ioc":"1.1.1.1", "type":"ip", "case":"brown", "analyst":"nancy", "notes":"potentially used in CnC"}, {...}, {...}]' /> </Form.Group> {button} </Form>
+      content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange} style={this.state.textAreaStyle} control='textarea' rows='10' label='Create IOC' placeholder='[{"ioc":"1.1.1.1", "type":"ip", "case":"brown", "analyst":"nancy", "notes":"potentially used in CnC"}, {...}, {...}]' /> </Form.Group> {button} </Form>
     }
 
 

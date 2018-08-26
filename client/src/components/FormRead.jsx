@@ -46,7 +46,7 @@ class FormRead extends CrudComponent {
     if (!this.state.resultView) {
       button = <Button className={this.state.buttonStatus} type="submit" id="submitBtn" onClick={this.handleClick}> Submit </Button>
 
-      content = <Form unstackable>  <Form.Group widths={2}> <Form.Input className={this.state.classname}  id="inputbox" control="textarea" rows="5" label="Read IOC" required placeholder='{"type":"domain"}' onChange={this.handleChange} onKeyPress={this.handleKeyPress} /> </Form.Group> {button} </Form>
+      content = <Form unstackable>  <Form.Group widths={2}> <Form.Input style={this.state.textAreaStyle}  id="inputbox" control="textarea" rows="5" label="Read IOC"  placeholder='{"type":"domain"}' onChange={this.handleChange} onKeyPress={this.handleKeyPress} /> </Form.Group> {button} </Form>
      }
 
     if (this.state.resultView)
