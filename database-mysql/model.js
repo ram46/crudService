@@ -40,9 +40,14 @@ module.exports = {
 
   },
 
-  delete: function(iocs) {
-
+  delete: function(filter, cb) {
+    IOC.destroy({where: filter}).then( (result) => {
+      cb(null, result);
+    }).catch( (err) => {
+      cb(err, null);
+    })
   }
+
 }
 
 
