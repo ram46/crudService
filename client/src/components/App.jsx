@@ -11,7 +11,6 @@ class App extends React.Component {
     }
   }
 
-
   componentDidMount() {
 
   }
@@ -19,7 +18,7 @@ class App extends React.Component {
   render() {
     return (<div>
       <BrownGrid />
-      {/* <Monitor /> */}
+      <Monitor /> {/* ServiceRegistry service should run else give error*/}
     </div>)
   }
 }

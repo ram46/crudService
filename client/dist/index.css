@@ -17,14 +17,6 @@ body {
     white-space: nowrap;
 }
 
-.invalidJSON {
-  border: 1px solid red;
-}
-
-.validJSON {
-  border: 1px solid green;
-}
-
 p {
   color: black;
 }
