@@ -1,17 +1,14 @@
 var React = require('react');
 
 var ReactTestUtils = require('react-dom/test-utils');
-var ListServices = require('../../client/src/components/ListServices.jsx');
+var FormCreate = require('../../client/src/components/FormCreate.jsx');
 
 
 var expect = require('chai').expect;
 
 describe('root', function () {
   it('renders without problems', function () {
-    // var root = ReactTestUtils.renderIntoDocument(<List />);
-    var root = ReactTestUtils.isCompositeComponent(ListServices, <ListServices />)
+    var root = ReactTestUtils.isCompositeComponent(FormCreate, <FormCreate />)
     expect(root).to.exist;
   });
 });
-
-
