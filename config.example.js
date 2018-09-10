@@ -1,6 +1,6 @@
 module.exports = {
-  HOST     : 'localhost',
-  USER    : <user>,
-  PASSWORD : <pwd>
-  DATABASE : <db_name>
+  HOST     : 'cruddb-node',
+  USER    : process.env.MYSQL_USER,
+  PASSWORD : process.env.MYSQL_ROOT_PASSWORD,
+  DATABASE : process.env.MYSQL_DATABASE
 }

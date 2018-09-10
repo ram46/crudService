@@ -20,7 +20,7 @@ catch(e) {
 
 try {
   var sequelize = new Sequelize(config.DATABASE, config.USER, config.PASSWORD, {
-    host: config.HOST,
+    host: 'cruddb-node',
     dialect: 'mysql',
   });
 } catch(e) {
