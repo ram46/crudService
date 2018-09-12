@@ -20,7 +20,7 @@ COPY . /crudService
 # Note the above 'COPY . /crudService' could be achieved using relative path '.', since we are already in the crudService as we did WORKDIR above and did not change path after that.
 # COPY . .
 
-CMD npm run postinstall && npm run start
+CMD npm run postinstall && npm run start && node database-mysql/seed.js
 
 # Two things 1) EXPOSE and 2) using -p in the docker run cmd for publish.
 # EXPOSE is used for inter dockers communication. Publishing is important when the service needs to be accessed from outside e.g localhost.
