@@ -30,6 +30,7 @@ class FormUpdate extends CrudComponent {
   }
 
  handleClick(e) {
+    e.preventDefault();
     // extending the handleClick method of parent
     super.handleClick(e) // this will set the 'resultView' state
 
