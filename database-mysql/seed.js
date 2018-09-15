@@ -5,64 +5,89 @@ IOC.sync();
 
 
 IOC.bulkCreate([
-  { ioc: '2.2.2.2',
-    type: 'IP',
-    analyst: 'john',
-    notes: 'testing 123',
-    case: 'ABC',
-    version: 1
-  },
-
-  { ioc: 'mal',
-    type: 'string',
-    analyst: 'james',
-    notes: 'test',
-    case: 'XYZ',
-    version: 1
-  },
-
-
-  { ioc: 'mango.com',
+  { ioc: 'kavkazcentr.info',
     type: 'domain',
     analyst: 'john',
-    notes: 'testing 123',
-    case: 'DD',
+    notes: 'DnsEntryItem',
+    case: 'APT28',
+    version: 1
+  },
+
+  { ioc: 'rnil.am',
+    type: 'domain',
+    analyst: 'james',
+    notes: 'DnsEntryItem',
+    case: 'APT28',
     version: 1
   },
 
 
-  { ioc: '9.0.0.1',
-    type: 'IP',
+  { ioc: 'n0vinite.com',
+    type: 'domain',
+    analyst: 'john',
+    notes: 'DnsEntryItem',
+    case: 'APT28',
+    version: 1
+  },
+
+
+  { ioc: 'poczta.mon.q0v.pl',
+    type: 'domain',
     analyst: 'maya',
-    notes: 'slsds',
-    case: 'codeB',
+    notes: 'DnsEntryItem',
+    case: 'APT28',
     version: 1
   },
 
 
-  { ioc: 'cartoonnetwork.com',
+  { ioc: 'Microsoft\MediaPlayer\{E6696105-E63E-4EF1-939E-15DDD83B669A}',
     type: 'domain',
     analyst: 'nabeela',
-    notes: 'testing 123',
-    case: 'glucose',
+    notes: 'RegistryItem',
+    case: 'APT28',
     version: 1
   },
 
 
-  { ioc: '1.2.2.2',
-    type: 'IP',
+  { ioc: '062fe1336459a851bd0ea271bb2afe35',
+    type: 'md5',
     analyst: 'john',
-    notes: 'testing 123',
-    case: 'sea',
+    notes: 'FileItem/Md5sum',
+    case: 'APT30',
     version: 1
   },
 
 
-  { ioc: 'pdf',
+  { ioc: '2.2.21.1',
+    type: 'ip',
+    analyst: 'Jeo',
+    notes: 'IPv4',
+    case: 'Bearz',
+    version: 1
+  },
+
+
+  { ioc: '1.2.1.1',
+    type: 'ip',
+    analyst: 'Joel',
+    notes: 'IPv4',
+    case: 'Bearz',
+    version: 1
+  },
+
+  { ioc: 'smigroup-online.co.uk',
+    type: 'domain',
+    analyst: 'john',
+    notes: 'DnsEntryItem',
+    case: 'APT28',
+    version: 1
+  },
+
+  { ioc: '3b0ecd011500f61237c205834db0e13a',
     type: 'IP',
     analyst: 'mkr',
-    notes: '123',
-    case: 'random',
+    notes: 'FileItem/Md5sum',
+    case: 'APT28',
     version: 1
   }],
 
