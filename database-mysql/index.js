@@ -33,7 +33,7 @@ const IOC = sequelize.define('ioc', {
   type: Sequelize.STRING,
   analyst:  Sequelize.STRING,
   notes: Sequelize.TEXT,
-  case: {type: Sequelize.STRING, unique: true, allowNull: true},
+  case: {type: Sequelize.STRING, allowNull: true},
   version: {type: Sequelize.INTEGER},
 });
 
