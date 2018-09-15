@@ -84,7 +84,7 @@ IOC.bulkCreate([
   },
 
   { ioc: '3b0ecd011500f61237c205834db0e13a',
-    type: 'IP',
+    type: 'file',
     analyst: 'mkr',
     notes: 'FileItem/Md5sum',
     case: 'APT28',
