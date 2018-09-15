@@ -41,7 +41,7 @@ IOC.bulkCreate([
 
 
   { ioc: 'Microsoft\MediaPlayer\{E6696105-E63E-4EF1-939E-15DDD83B669A}',
-    type: 'domain',
+    type: 'registry',
     analyst: 'nabeela',
     notes: 'RegistryItem',
     case: 'APT28',
@@ -50,7 +50,7 @@ IOC.bulkCreate([
 
 
   { ioc: '062fe1336459a851bd0ea271bb2afe35',
-    type: 'md5',
+    type: 'file',
     analyst: 'john',
     notes: 'FileItem/Md5sum',
     case: 'APT30',
