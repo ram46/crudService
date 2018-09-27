@@ -1,40 +1,53 @@
 const Sequelize = require('sequelize');
 
 
-// try {
-//   var config = require('../config.js')
-// }
+try {
+  var config = require('../config.js')
+}
 
 
-// catch(e) {
-//   var config = {
-//     HOST    : process.env.CLEARDB_DATABASE_HOST,
-//     USER    : process.env.CLEARDB_DATABASE_USER,
-//     PASSWORD  : process.env.CLEARDB_DATABASE_PASSWD,
-//     DATABASE : process.env.CLEARDB_DATABASE,
-//     CLIENT_ID: process.env.CLIENT_ID,
-//     PORT: 3306
-//   }
-// }
+catch(e) {
+  var config = {
+    HOST    : process.env.CLEARDB_DATABASE_HOST,
+    USER    : process.env.CLEARDB_DATABASE_USER,
+    PASSWORD  : process.env.CLEARDB_DATABASE_PASSWD,
+    DATABASE : process.env.CLEARDB_DATABASE,
+    CLIENT_ID: process.env.CLIENT_ID,
+    PORT: 3306
+  }
+}
 
 
-// try {
-//   var sequelize = new Sequelize(config.DATABASE, config.USER, config.PASSWORD, {
-//     host: 'cruddb-node',
-//     dialect: 'mysql',
-//   });
-// } catch(e) {
-//   console.log(e)
-// }
+try {
+  var sequelize = new Sequelize(config.DATABASE, config.USER, config.PASSWORD, {
+    host: 'cruddb-node',
+    dialect: 'mysql',
+  });
+} catch(e) {
+  console.log(e)
+}
 
 
 
-// ########### For Dev Work Only ###############
-var sequelize = new Sequelize('brown', 'root', '', {
-  host: 'localhost',
-  dialect: 'mysql',
-});
+catch(e) {
+  var config = {
+    HOST     : 'cruddb-node',
+    USER    : process.env.MYSQL_USER,
+    PASSWORD : process.env.MYSQL_ROOT_PASSWORD,
+    DATABASE : process.env.MYSQL_DATABASE,
+    PORT: 3306
+  }
+}
 
+
+try {
+  var sequelize = new Sequelize(config.DATABASE, config.USER, config.PASSWORD, {
+    host: config.HOST,
+    dialect: 'mysql',
+  });
+} catch(e) {
+  console.log(e)
+}
 
 
 const IOC = sequelize.define('ioc', {
