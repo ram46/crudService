@@ -72,6 +72,7 @@ const CaseIOC = sequelize.define('caseIOC', {
 
 
 const CaseVersion = sequelize.define('caseVersion', {
+  diff: {type: Sequelize.JSON},
   id: {type: Sequelize.INTEGER, primaryKey:true, autoIncrement:true}
 })
 

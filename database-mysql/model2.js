@@ -26,7 +26,8 @@ module.exports = {
               module.exports.getVersion(caseName, (currentVersion) => {
                 var newVersion = currentVersion + 1;
                 db.Version.create({number: newVersion}).then((version) => {
-                  version.addCase(caseObj);
+                  // version.addCase(caseObj);
+                  version.addCase(caseObj, {through: {diff: `{"createdIOC":"${IOC}"}`}});
                   cb(null, "ok");
                 })
               })
@@ -35,12 +36,8 @@ module.exports = {
         })
       }
 
-
-
       if (!caseObj) {
         db.Case.create({name: caseName}).then((newCase) => {
-
-
           db.IOC.find({where: {ioc: IOC, type: iocType}}).then((ioc) => {
             if (ioc) {
               // if ioc exist then dont create it
@@ -54,7 +51,8 @@ module.exports = {
             }
 
             db.Version.create({number:100}).then((version) => {
-              version.addCase(newCase);
+              // version.addCase(newCase);
+              version.addCase(newCase, {through: {diff: `{"createdIOC":"${IOC}", "createdCase":"${caseName}"}`}})
               cb(null, "success");
             })
           })
@@ -64,13 +62,33 @@ module.exports = {
 },
 
 
-  updateIOC: function(fromValue, toValue, iocType) {
-    db.IOC.update({ioc: toValue, type: iocType}, {where: {ioc: fromValue}}).then((ioc) => {
-      console.log(ioc)
-      if (!ioc[0]) throw new Error("value to update not found ....")
-      else  {
-        console.log("updated!! ")
+ updateIOC: function(fromValue, toValue, iocType, caseName, cb) {
+      db.Case.find({where:{name: caseName}}).then((caseObj) => {
+      if (!caseObj) {
+        cb('case does not exist', null);
+      }
 
+      if (caseObj) {
+        db.IOC.find({where: {ioc: fromValue, type: iocType}}).then((ioc) => {
+          if (!ioc) cb("ioc does not exist in this case", null);
+
+          if (ioc) {
+            db.IOC.create({ioc: toValue, type: iocType}).then((ioc) => {
+              ioc.addCase(caseObj);
+              // db.Diff.create({ data: `{modifiedIOC:${fromValue}to${toValue}` }).then( (diff) => {},  {include: [ db.CaseVersion ] });
+              module.exports.getVersion(caseName, (currentVersion) => {
+                var newVersion = currentVersion + 1;
+                db.Version.create({number: newVersion}).then((version) => {
+
+                  // version.addCase(caseObj);
+                  version.addCase(caseObj, {through: {diff:`{"modifiedIOC":{"from":"${fromValue}", "to":"${toValue}"}}`}});
+
+                  cb(null, "ok");
+                })
+              })
+            })
+          }
+        })
       }
     })
   },
