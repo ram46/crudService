@@ -76,8 +76,27 @@ module.exports = {
   },
 
 
-  deleteIOC: function() {
+  deleteIOC: function(iocToDelete, iocType, caseName, cb) {
+    db.Case.find({where:{name: caseName}}).then((caseObj) => {
+      if (!caseObj) {
+        cb('case does not exist', null);
+      }
 
+      if (caseObj) {
+        db.IOC.find({where: {ioc: iocToDelete, type: iocType}}).then((ioc) => {
+          if (!ioc) cb('ioc does not exist', null);
+          if (ioc) {
+            module.exports.getVersion(caseName, (currentVersion) => {
+              var newVersion = currentVersion + 1;
+              db.Version.create({number: newVersion}).then((version) => {
+                version.addCase(caseObj, {through: {diff:`{deletedIOC:${iocToDelete}}`}});
+                cb(null, "ok");
+              })
+            })
+          }
+        })
+      }
+    })
   },
 
   deleteCase: function() {},
