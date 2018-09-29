@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const db = require('./index.js')
 
 
+
 var _getVersion = function(caseName, cb) {
 
   db.Case.find({where:{name: caseName}}).then((caseObj) => {
@@ -16,7 +17,7 @@ var _iocExistsInCurrentCaseState = function(caseName, IOC, cb) {
   // get the last version of the case
   _getVersion(caseName, (currentVersion) => {
     // recontruct and check if the last version has this ioc, if not, then create, else not.
-    module.exports.getCaseVersionSnapshot(caseName, currentVersion, (currentState) => {
+    module.exports.getCaseVersionSnapshot(caseName, currentVersion, (err, currentState) => {
       cb(currentState.includes(IOC));
     });
   });
@@ -229,29 +230,29 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
   getVersionsOFCase: function() {},
 }
 
-module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
-  console.log("err ****************", err);
-  console.log("diff ****************", diff);
-})
-
-
-// module.exports.createNewIOC("APT120", "44.exe", "file", (err, result) => {
-//   module.exports.createNewIOC("APT100", "a.exe", "file", (err, result) => {
-//     module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-
-//       module.exports.createNewIOC("APT100", "111.exe", "file", (err, result) => {
-//         module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-
-//           module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
-//             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
-
-//               module.exports.deleteIOC("5.5.5.5", "IP", "APT100", (err, result) => {
-
-//               })
-//             })
-//           })
-//         })
-//       })
-//     })
-//   })
+// module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
+//   console.log("err ****************", err);
+//   console.log("diff ****************", diff);
 // })
+
+
+module.exports.createNewIOC("APT120", "44.exe", "file", (err, result) => {
+  module.exports.createNewIOC("APT100", "a.exe", "file", (err, result) => {
+    module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+
+      module.exports.createNewIOC("APT100", "111.exe", "file", (err, result) => {
+        module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+
+          module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
+            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+
+              module.exports.deleteIOC("5.5.5.5", "IP", "APT100", (err, result) => {
+
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+})
