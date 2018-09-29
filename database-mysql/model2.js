@@ -102,7 +102,7 @@ var _getCaseIdAndVersionIdsByCasename = function(caseName, versionNumber, cb) {
 
 module.exports = {
 
-createNewIOC: function(caseName, IOC, iocType, cb) {
+createIOC: function(caseName, IOC, iocType, cb) {
 
       db.Case.find({where:{name: caseName}}).then((caseObj) => {
 
@@ -221,13 +221,6 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
       }
     })
   },
-
-
-  deleteCase: function() {},
-  getIOCsOFCase: function() {},
-  getVersionsOFCase: function() {},
-  getVersionsOFIOC: function() {},
-  getVersionsOFCase: function() {},
 }
 
 // module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
@@ -236,12 +229,12 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
 // })
 
 
-module.exports.createNewIOC("APT120", "44.exe", "file", (err, result) => {
-  module.exports.createNewIOC("APT100", "a.exe", "file", (err, result) => {
-    module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
+  module.exports.createIOC("APT100", "a.exe", "file", (err, result) => {
+    module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-      module.exports.createNewIOC("APT100", "111.exe", "file", (err, result) => {
-        module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+      module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
+        module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
           module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
