@@ -10,6 +10,17 @@ var _getVersion = function(caseName, cb) {
     })
   }
 
+var _iocExistsInCurrentCaseState = function(caseName, IOC, cb) {
+  // get the last version of the case
+  _getVersion(caseName, (currentVersion) => {
+    // recontruct and check if the last version has this ioc, if not, then create, else not.
+    module.exports.getCaseVersionSnapshot(caseName, currentVersion, (currentState) => {
+      console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkk', currentState)
+      cb(currentState.includes(IOC));
+    });
+  });
+}
+
 
 var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
     db.Case.find({where: {name: caseName}}).then((caseObj) => {
@@ -82,31 +93,30 @@ var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
 
 module.exports = {
 
-  createNewIOC: function(caseName, IOC, iocType, cb) {
+createNewIOC: function(caseName, IOC, iocType, cb) {
 
       db.Case.find({where:{name: caseName}}).then((caseObj) => {
 
       if (caseObj) {
-        db.IOC.find({where: {ioc: IOC, type: iocType}}).then((ioc) => {
-          if (ioc) cb("Error: ioc already exist in this case", null);
-          if (!ioc) {
+
+        _iocExistsInCurrentCaseState(caseName, IOC, (iocExists) => {
+
+          if (iocExists) {
+            cb("Error: ioc already exist in this case", null);
+          } else {
             db.IOC.create({ioc: IOC, type: iocType}).then((ioc) => {
-              ioc.addCase(caseObj)
-              _getVersion(caseName, (currentVersion) => {
-                var newVersion = currentVersion + 1;
-                console.log('%%%%%%% currentVersion %%%%%%')
-                console.log(currentVersion)
-                console.log('%%%%%%% newVersion %%%%%%')
-                console.log(newVersion)
-                db.Version.create({number: newVersion}).then((version) => {
-                  // version.addCase(caseObj);
-                  version.addCase(caseObj, {through: {diff: `{"createdIOC":"${IOC}"}`}});
+            ioc.addCase(caseObj)
+            _getVersion(caseName, (currentVersion) => {
+              var newVersion = currentVersion + 1;
+              db.Version.create({number: newVersion}).then((version) => {
+                version.addCase(caseObj, {through: {diff: `{"createdIOC":"${IOC}"}`}});
                   cb(null, "ok");
                 })
               })
             })
           }
         })
+
       }
 
       if (!caseObj) {
@@ -124,7 +134,6 @@ module.exports = {
             }
 
             db.Version.create({number:100}).then((version) => {
-              // version.addCase(newCase);
               version.addCase(newCase, {through: {diff: `{"createdIOC":"${IOC}", "createdCase":"${caseName}"}`}})
               cb(null, "success");
             })
@@ -136,52 +145,46 @@ module.exports = {
 
 
  updateIOC: function(fromValue, toValue, iocType, caseName, cb) {
-      db.Case.find({where:{name: caseName}}).then((caseObj) => {
-      if (!caseObj) {
-        cb('case does not exist', null);
-      }
+    db.Case.find({where:{name: caseName}}).then((caseObj) => {
+    if (!caseObj) {
+      cb('case does not exist', null);
+    }
 
-      if (caseObj) {
-        db.IOC.find({where: {ioc: fromValue, type: iocType}}).then((ioc) => {
-          if (!ioc) cb("ioc does not exist in this case", null);
-
-          if (ioc) {
+    if (caseObj) {
+       _iocExistsInCurrentCaseState(caseName, fromValue, (iocExists) => {
+          if (!iocExists) cb('no ioc found tomodify', null);
+          if (iocExists) {
             db.IOC.create({ioc: toValue, type: iocType}).then((ioc) => {
               ioc.addCase(caseObj);
-              // db.Diff.create({ data: `{modifiedIOC:${fromValue}to${toValue}` }).then( (diff) => {},  {include: [ db.CaseVersion ] });
               _getVersion(caseName, (currentVersion) => {
                 var newVersion = currentVersion + 1;
                 db.Version.create({number: newVersion}).then((version) => {
-
-                  // version.addCase(caseObj);
                   version.addCase(caseObj, {through: {diff:`{"modifiedIOC":{"from":"${fromValue}", "to":"${toValue}"}}`}});
-
                   cb(null, "ok");
+
                 })
               })
             })
           }
-        })
-      }
-    })
-  },
-
+      })
+    }
+  })
+},
 
   deleteIOC: function(iocToDelete, iocType, caseName, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
       if (!caseObj) {
         cb('case does not exist', null);
       }
-
       if (caseObj) {
-        db.IOC.find({where: {ioc: iocToDelete, type: iocType}}).then((ioc) => {
-          if (!ioc) cb('ioc does not exist', null);
-          if (ioc) {
+        // it is possible that someone re-created the ioc after deleting. If so, it should be able to delete again and so on.
+        _iocExistsInCurrentCaseState(caseName, iocToDelete, (iocExists) => {
+          if (!iocExists) cb('ioc already does not exist', null);
+          if (iocExists) {
             _getVersion(caseName, (currentVersion) => {
-              var newVersion = currentVersion + 1;
-              db.Version.create({number: newVersion}).then((version) => {
+            var newVersion = currentVersion + 1;
+            db.Version.create({number: newVersion}).then((version) => {
               version.addCase(caseObj, {through: {diff: `{"deletedIOC":"${iocToDelete}"}`}});
-                // version.addCase(caseObj, {through: {diff:`{"deletedIOC":"${iocToDelete}"}`}});
                 cb(null, "ok");
               })
             })
@@ -220,15 +223,15 @@ module.exports = {
   getVersionsOFCase: function() {},
 }
 
-module.exports.getCaseVersionSnapshot("APT100", 104, (err, diff) => {
-  console.log("diff ****************", diff);
-  console.log("err ****************", err);
-})
+// module.exports.getCaseVersionSnapshot("APT100", 104, (err, diff) => {
+//   console.log("diff ****************", diff);
+//   console.log("err ****************", err);
+// })
 
 
-// module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
-//   console.log("result ****************", result);
-//   console.log("errr ****************", err);
+module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
+  console.log("result ****************", result);
+  console.log("errr ****************", err);
 
 
 //   module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
@@ -243,26 +246,26 @@ module.exports.getCaseVersionSnapshot("APT100", 104, (err, diff) => {
 //         console.log("result ****************", result);
 //         console.log("errr ****************", err);
 
-//         module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-//           console.log("result ****************", result);
-//           console.log("errr ****************", err);
+        // module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+        //   console.log("result ****************", result);
+        //   console.log("errr ****************", err);
 
-//           module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
-//             console.log("result ****************", result);
-//             console.log("errr ****************", err);
+          // module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
+          //   console.log("result ****************", result);
+          //   console.log("errr ****************", err);
 
 //             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
 //               console.log("result ****************", result);
 //               console.log("errr ****************", err);
 
-//               module.exports.deleteIOC("last.exe", "file", "APT100", (err, result) => {
-//                 console.log("result ****************", result);
-//                 console.log("errr ****************", err);
-//               })
+              // module.exports.deleteIOC("33derder1.exe", "file", "APT101", (err, result) => {
+              //   console.log("result ****************", result);
+              //   console.log("errr ****************", err);
+              // })
 //             })
 //           })
 //         })
 //       })
-//     })
-//   })
-// })
+    // })
+  // })
+})
