@@ -63,20 +63,21 @@ var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
     diffs.forEach((DBtransaction) => {
       for (var [key, value] of Object.entries(JSON.parse(DBtransaction))) {
         if (key === 'createdIOC') {
-          module.exports.__unpackCreatedIOC(output, value)
+          __unpackCreatedIOC(output, value)
         }
 
         if (key === 'modifiedIOC') {
-          module.exports.__unpackModifiedIOC(output, value)
+          __unpackModifiedIOC(output, value)
         }
 
         if (key === 'deletedIOC') {
-          module.exports.__unpackDeletedIOC(output, value)
+          __unpackDeletedIOC(output, value)
         }
       }
     })
     console.log('!!!!!****** RECONTRUCTED IOCS FOR THE VERSION  ****** !!!!!!')
     console.log(output)
+    cb(output)
   }
 
 
@@ -94,6 +95,10 @@ module.exports = {
               ioc.addCase(caseObj)
               _getVersion(caseName, (currentVersion) => {
                 var newVersion = currentVersion + 1;
+                console.log('%%%%%%% currentVersion %%%%%%')
+                console.log(currentVersion)
+                console.log('%%%%%%% newVersion %%%%%%')
+                console.log(newVersion)
                 db.Version.create({number: newVersion}).then((version) => {
                   // version.addCase(caseObj);
                   version.addCase(caseObj, {through: {diff: `{"createdIOC":"${IOC}"}`}});
@@ -195,7 +200,6 @@ module.exports = {
     _getCaseIdAndVersionIdsByCasename(caseName, (err, caseVersionMap) => {
       if (err) console.log('Error In fetching case id for this caseName')
       if (caseVersionMap) {
-        console.log('^^^^^^^^^^^^^ ')
         var caseID = caseVersionMap.caseId
         var versionIDs = caseVersionMap.versionId.slice(0, versionCount + 1)
         console.log(caseVersionMap)
@@ -217,21 +221,13 @@ module.exports = {
 }
 
 
-// module.exports.createAnArrayOfDiffs("APT100", 102, (err, diff) => {
-//   console.log("diff ****************", diff);
-//   console.log("err ****************", err);
-// })
 
-// module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
-//   console.log("result ****************", result);
-//   console.log("errr ****************", err);
-// })
-
-module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
+module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
   console.log("result ****************", result);
   console.log("errr ****************", err);
 
-  module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
+
+  module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
     console.log("result ****************", result);
     console.log("errr ****************", err);
 
@@ -239,17 +235,27 @@ module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
       console.log("result ****************", result);
       console.log("errr ****************", err);
 
-      module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+      module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
         console.log("result ****************", result);
         console.log("errr ****************", err);
 
-        module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
+        module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
           console.log("result ****************", result);
           console.log("errr ****************", err);
 
-          module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+          module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
             console.log("result ****************", result);
             console.log("errr ****************", err);
+
+            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+              console.log("result ****************", result);
+              console.log("errr ****************", err);
+
+              module.exports.deleteIOC("last.exe", "file", "APT100", (err, result) => {
+                console.log("result ****************", result);
+                console.log("errr ****************", err);
+              })
+            })
           })
         })
       })
@@ -257,3 +263,7 @@ module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
   })
 })
 
+// module.exports.getCaseVersionSnapshot("APT100", 104, (err, diff) => {
+//   console.log("diff ****************", diff);
+//   console.log("err ****************", err);
+// })
