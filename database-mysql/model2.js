@@ -1,17 +1,86 @@
 const Sequelize = require('sequelize');
 const db = require('./index.js')
 
-module.exports = {
-  sequelize: db.sequelize,
-  getVersion: function(caseName, cb) {
+
+var _getVersion = function(caseName, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
       caseObj.getVersions().then((versions) => {
        var versionNumber = versions.length + 100
         cb(versionNumber)
       })
     })
+  }
 
-  },
+
+var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
+    db.Case.find({where: {name: caseName}}).then((caseObj) => {
+      if (!caseObj)  cb("case not found", null)
+
+      if (caseObj) {
+        var caseID = caseObj.id
+        var versionIds = []
+        var caseVersionMap = {}
+
+        caseObj.getVersions().then((versions) => {
+          versionIDs = versions.map((elem) => {
+            return elem.id
+          })
+          caseVersionMap = {caseName: caseName, caseId: caseID, versionId: versionIDs }
+          cb(null, caseVersionMap)
+        })
+      }
+    })
+  }
+
+
+  var __unpackCreatedIOC = function(arr, objValue) {
+      arr.push(objValue)
+
+  }
+
+  var __unpackDeletedIOC = function(arr, objValue) {
+    var indexToDelete = arr.indexOf(objValue)
+    if (indexToDelete === -1) return "elem to delete not found"
+    else arr.splice(indexToDelete, 1)
+  }
+
+  var  __unpackModifiedIOC = function(arr, objValue) {
+    var fromValue = objValue.from;
+    var toValue = objValue.to;
+
+    var indexToModify = arr.indexOf(fromValue);
+    if (indexToModify === -1) return "elem to delete not found"
+    else arr.splice(indexToModify, 1, toValue)
+  }
+
+  // sample diff = [ '{"createdIOC":"33derder1.exe", "createdCase":"APT100"}', '{"createdIOC":"7.7.7.7"}', '{"modifiedIOC":{"from":"7.7.7.7", "to":"5.5.5.5"}}' ]
+
+  var _processDiffs = function(diffs) {
+    var output = []
+    console.log('!!!!!****** Before....  ****** !!!!!!')
+    console.log(diffs)
+
+    diffs.forEach((DBtransaction) => {
+      for (var [key, value] of Object.entries(JSON.parse(DBtransaction))) {
+        if (key === 'createdIOC') {
+          module.exports.__unpackCreatedIOC(output, value)
+        }
+
+        if (key === 'modifiedIOC') {
+          module.exports.__unpackModifiedIOC(output, value)
+        }
+
+        if (key === 'deletedIOC') {
+          module.exports.__unpackDeletedIOC(output, value)
+        }
+      }
+    })
+    console.log('!!!!!****** RECONTRUCTED IOCS FOR THE VERSION  ****** !!!!!!')
+    console.log(output)
+  }
+
+
+module.exports = {
 
   createNewIOC: function(caseName, IOC, iocType, cb) {
 
@@ -23,7 +92,7 @@ module.exports = {
           if (!ioc) {
             db.IOC.create({ioc: IOC, type: iocType}).then((ioc) => {
               ioc.addCase(caseObj)
-              module.exports.getVersion(caseName, (currentVersion) => {
+              _getVersion(caseName, (currentVersion) => {
                 var newVersion = currentVersion + 1;
                 db.Version.create({number: newVersion}).then((version) => {
                   // version.addCase(caseObj);
@@ -76,7 +145,7 @@ module.exports = {
             db.IOC.create({ioc: toValue, type: iocType}).then((ioc) => {
               ioc.addCase(caseObj);
               // db.Diff.create({ data: `{modifiedIOC:${fromValue}to${toValue}` }).then( (diff) => {},  {include: [ db.CaseVersion ] });
-              module.exports.getVersion(caseName, (currentVersion) => {
+              _getVersion(caseName, (currentVersion) => {
                 var newVersion = currentVersion + 1;
                 db.Version.create({number: newVersion}).then((version) => {
 
@@ -104,10 +173,11 @@ module.exports = {
         db.IOC.find({where: {ioc: iocToDelete, type: iocType}}).then((ioc) => {
           if (!ioc) cb('ioc does not exist', null);
           if (ioc) {
-            module.exports.getVersion(caseName, (currentVersion) => {
+            _getVersion(caseName, (currentVersion) => {
               var newVersion = currentVersion + 1;
               db.Version.create({number: newVersion}).then((version) => {
-                version.addCase(caseObj, {through: {diff:`{deletedIOC:${iocToDelete}}`}});
+              version.addCase(caseObj, {through: {diff: `{"deletedIOC":"${iocToDelete}"}`}});
+                // version.addCase(caseObj, {through: {diff:`{"deletedIOC":"${iocToDelete}"}`}});
                 cb(null, "ok");
               })
             })
@@ -117,77 +187,12 @@ module.exports = {
     })
   },
 
-getCaseIdAndVersionIdsByCasename: function(caseName, cb) {
-    db.Case.find({where: {name: caseName}}).then((caseObj) => {
-      if (!caseObj)  cb("case not found", null)
-
-      if (caseObj) {
-        var caseID = caseObj.id
-        var versionIds = []
-        var caseVersionMap = {}
-
-        caseObj.getVersions().then((versions) => {
-          versionIDs = versions.map((elem) => {
-            return elem.id
-          })
-          caseVersionMap = {caseName: caseName, caseId: caseID, versionId: versionIDs }
-          cb(null, caseVersionMap)
-        })
-      }
-    })
-  },
 
 
-    __unpackCreatedIOC: function(arr, objValue) {
-      arr.push(objValue)
-
-  },
-
-  __unpackDeletedIOC: function(arr, objValue) {
-    var indexToDelete = arr.indexOf(objValue)
-    if (indexToDelete === -1) return "elem to delete not found"
-    else arr.splice(indexToDelete, 1)
-  },
-
-   __unpackModifiedIOC: function(arr, objValue) {
-    var fromValue = objValue.from;
-    var toValue = objValue.to;
-
-    var indexToModify = arr.indexOf(fromValue);
-    if (indexToModify === -1) return "elem to delete not found"
-    else arr.splice(indexToModify, 1, toValue)
-  },
-
-  // sample diff = [ '{"createdIOC":"33derder1.exe", "createdCase":"APT100"}', '{"createdIOC":"7.7.7.7"}', '{"modifiedIOC":{"from":"7.7.7.7", "to":"5.5.5.5"}}' ]
-
-  processDiffs: function(diffs) {
-    var output = []
-    console.log('!!!!!****** Before....  ****** !!!!!!')
-    console.log(diffs)
-
-    diffs.forEach((DBtransaction) => {
-      for (var [key, value] of Object.entries(JSON.parse(DBtransaction))) {
-        if (key === 'createdIOC') {
-          module.exports.__unpackCreatedIOC(output, value)
-        }
-
-        if (key === 'modifiedIOC') {
-          module.exports.__unpackModifiedIOC(output, value)
-        }
-
-        if (key === 'deletedIOC') {
-          module.exports.__unpackDeletedIOC(output, value)
-        }
-      }
-    })
-    console.log('!!!!!****** RECONTRUCTED IOCS FOR THE VERSION  ****** !!!!!!')
-    console.log(output)
-  },
-
-  createAnArrayOfDiffs: function(caseName, versionNumber, cb) {
+  getCaseVersionSnapshot: function(caseName, versionNumber, cb) {
     var diffs = []
     var versionCount = versionNumber - 100 // 100 was starting point
-    module.exports.getCaseIdAndVersionIdsByCasename(caseName, (err, caseVersionMap) => {
+    _getCaseIdAndVersionIdsByCasename(caseName, (err, caseVersionMap) => {
       if (err) console.log('Error In fetching case id for this caseName')
       if (caseVersionMap) {
         console.log('^^^^^^^^^^^^^ ')
@@ -197,13 +202,11 @@ getCaseIdAndVersionIdsByCasename: function(caseName, cb) {
         console.log(versionIDs)
         db.CaseVersion.findAll({where:{caseId: caseID,  versionId:versionIDs}}).then((caseVersionObj) => {
           caseVersionObj.forEach((elem) => diffs.push(elem.diff))
-          module.exports.processDiffs(diffs)
+          _processDiffs(diffs)
         })
       }
     })
   },
-
-
 
 
   deleteCase: function() {},
@@ -214,47 +217,43 @@ getCaseIdAndVersionIdsByCasename: function(caseName, cb) {
 }
 
 
-
-
-module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
-  console.log("result ****************", result);
-  console.log("errr ****************", err);
-})
-
-// module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
-//   console.log("result ****************", result);
-//   console.log("errr ****************", err);
-
-
-//     module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
-//     console.log("result ****************", result);
-//     console.log("errr ****************", err);
-
-//     module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
-//     console.log("result ****************", result);
-//     console.log("errr ****************", err);
-
-//       module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-//       console.log("result ****************", result);
-//       console.log("errr ****************", err);
-
-
-//         module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
-//           console.log("result ****************", result);
-//           console.log("errr ****************", err);
-
-//           module.exports.deleteIOC("5.5.5.5", "IP", "APT103", (err, result) => {
-//           console.log("result ****************", result);
-//           console.log("errr ****************", err);
-//           })
-//         })
-//       })
-//     })
-//   })
+// module.exports.createAnArrayOfDiffs("APT100", 102, (err, diff) => {
+//   console.log("diff ****************", diff);
+//   console.log("err ****************", err);
 // })
 
+// module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
+//   console.log("result ****************", result);
+//   console.log("errr ****************", err);
+// })
 
-module.exports.createAnArrayOfDiffs("APT100", 102, (err, diff) => {
-  console.log("diff ****************", diff);
-  console.log("err ****************", err);
+module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
+  console.log("result ****************", result);
+  console.log("errr ****************", err);
+
+  module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
+    console.log("result ****************", result);
+    console.log("errr ****************", err);
+
+    module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
+      console.log("result ****************", result);
+      console.log("errr ****************", err);
+
+      module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+        console.log("result ****************", result);
+        console.log("errr ****************", err);
+
+        module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
+          console.log("result ****************", result);
+          console.log("errr ****************", err);
+
+          module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+            console.log("result ****************", result);
+            console.log("errr ****************", err);
+          })
+        })
+      })
+    })
+  })
 })
+
