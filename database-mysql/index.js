@@ -23,11 +23,7 @@ try {
     host: 'cruddb-node',
     dialect: 'mysql',
   });
-} catch(e) {
-  console.log(e)
 }
-
-
 
 catch(e) {
   var config = {
