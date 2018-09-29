@@ -139,33 +139,23 @@ getCaseIdAndVersionIdsByCasename: function(caseName, cb) {
 
 
     __unpackCreatedIOC: function(arr, objValue) {
-      // take arr and string value, returns array
       arr.push(objValue)
 
   },
 
   __unpackDeletedIOC: function(arr, objValue) {
-    // takes array and objValue, returns: array
-    // var deepCopy = arr.slice(0)
-
     var indexToDelete = arr.indexOf(objValue)
     if (indexToDelete === -1) return "elem to delete not found"
     else arr.splice(indexToDelete, 1)
-    // else deepCopy.splice(indexToDelete, 1)
-    // return deepCopy
   },
 
    __unpackModifiedIOC: function(arr, objValue) {
-    // takes
-    // var deepCopy = arr.slice(0)
     var fromValue = objValue.from;
     var toValue = objValue.to;
 
     var indexToModify = arr.indexOf(fromValue);
     if (indexToModify === -1) return "elem to delete not found"
     else arr.splice(indexToModify, 1, toValue)
-    // else deepCopy.splice(indexToModify, 1, toValue)
-    // return deepCopy
   },
 
   // sample diff = [ '{"createdIOC":"33derder1.exe", "createdCase":"APT100"}', '{"createdIOC":"7.7.7.7"}', '{"modifiedIOC":{"from":"7.7.7.7", "to":"5.5.5.5"}}' ]
