@@ -153,7 +153,7 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
 },
 
 
- updateIOC: function(fromValue, toValue, iocType, caseName, cb) {
+ updateIOC: function(caseName, fromValue, toValue, iocType, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
     if (!caseObj) {
       cb(`case ${caseName} does not exist`, null);
@@ -180,7 +180,7 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
   })
 },
 
-  deleteIOC: function(iocToDelete, iocType, caseName, cb) {
+  deleteIOC: function(caseName, iocToDelete, iocType, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
       if (!caseObj) {
         cb(`case ${caseName} does not exist`, null);
@@ -243,10 +243,10 @@ module.exports.createNewIOC("APT120", "44.exe", "file", (err, result) => {
       module.exports.createNewIOC("APT100", "111.exe", "file", (err, result) => {
         module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-          module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
+          module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
 
-              module.exports.deleteIOC("5.5.5.5", "IP", "APT100", (err, result) => {
+              module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
 
               })
             })
