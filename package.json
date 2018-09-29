@@ -9,7 +9,7 @@
     "server": "nodemon server/index.js",
     "start": "node server/index.js",
     "karma-start": "./node_modules/karma/bin/karma start",
-    "server-spec": "mocha --full-trace -w tests/serverSpecs"
+    "server-spec": "mocha tests/serverSpecs"
   },
   "author": "Beth Johnson",
   "license": "ISC",
