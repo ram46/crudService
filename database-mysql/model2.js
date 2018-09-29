@@ -1,42 +1,56 @@
 const Sequelize = require('sequelize');
 const db = require('./index.js')
 
+
+
 var _getVersion = function(caseName, cb) {
-    db.Case.find({where:{name: caseName}}).then((caseObj) => {
-      caseObj.getVersions().then((versions) => {
-       var versionNumber = versions.length + 100
+
+  db.Case.find({where:{name: caseName}}).then((caseObj) => {
+    caseObj.getVersions().then((versions) => {
+      var versionNumber = versions.length - 1 + 100
         cb(versionNumber)
-      })
     })
-  }
+  })
+}
 
 var _iocExistsInCurrentCaseState = function(caseName, IOC, cb) {
   // get the last version of the case
   _getVersion(caseName, (currentVersion) => {
     // recontruct and check if the last version has this ioc, if not, then create, else not.
-    module.exports.getCaseVersionSnapshot(caseName, currentVersion, (currentState) => {
-      console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkk', currentState)
+    module.exports.getCaseVersionSnapshot(caseName, currentVersion, (err, currentState) => {
       cb(currentState.includes(IOC));
     });
   });
 }
 
 
-var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
+var _getCaseIdAndVersionIdsByCasename = function(caseName, versionNumber, cb) {
     db.Case.find({where: {name: caseName}}).then((caseObj) => {
-      if (!caseObj)  cb("case not found", null)
+      if (!caseObj)  cb(`case ${caseName} not found`, null)
 
       if (caseObj) {
+
         var caseID = caseObj.id
         var versionIds = []
         var caseVersionMap = {}
 
         caseObj.getVersions().then((versions) => {
-          versionIDs = versions.map((elem) => {
-            return elem.id
+          // versions.length should never be zero, because as soon as case created it has a version 100
+
+          // creating an array of versionNumbers just to check if the required versionNumber exists and provide proper error
+          versionNumbers = versions.map((elem) => {
+            return elem.number
           })
-          caseVersionMap = {caseName: caseName, caseId: caseID, versionId: versionIDs }
-          cb(null, caseVersionMap)
+
+          if (versionNumbers.indexOf(versionNumber) === -1 ) cb(`version ${versionNumber} not found in case ${caseName} `, null)
+
+          else if (versionNumbers.indexOf(versionNumber) !== -1 ) {
+            versionIDs = versions.map((elem) => {
+            return elem.id
+              })
+            caseVersionMap = {caseName: caseName, caseId: caseID, versionId: versionIDs }
+            cb(null, caseVersionMap)
+           }
         })
       }
     })
@@ -67,9 +81,6 @@ var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
 
   var _processDiffs = function(diffs) {
     var output = []
-    console.log('!!!!!****** Before....  ****** !!!!!!')
-    console.log(diffs)
-
     diffs.forEach((DBtransaction) => {
       for (var [key, value] of Object.entries(JSON.parse(DBtransaction))) {
         if (key === 'createdIOC') {
@@ -85,8 +96,6 @@ var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
         }
       }
     })
-    console.log('!!!!!****** RECONTRUCTED IOCS FOR THE VERSION  ****** !!!!!!')
-    console.log(output)
     return output
   }
 
@@ -102,7 +111,7 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
         _iocExistsInCurrentCaseState(caseName, IOC, (iocExists) => {
 
           if (iocExists) {
-            cb("Error: ioc already exist in this case", null);
+            cb(`ioc ${IOC} already exists in case ${caseName} `, null);
           } else {
             db.IOC.create({ioc: IOC, type: iocType}).then((ioc) => {
             ioc.addCase(caseObj)
@@ -144,10 +153,10 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
 },
 
 
- updateIOC: function(fromValue, toValue, iocType, caseName, cb) {
+ updateIOC: function(caseName, fromValue, toValue, iocType, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
     if (!caseObj) {
-      cb('case does not exist', null);
+      cb(`case ${caseName} does not exist`, null);
     }
 
     if (caseObj) {
@@ -171,15 +180,15 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
   })
 },
 
-  deleteIOC: function(iocToDelete, iocType, caseName, cb) {
+  deleteIOC: function(caseName, iocToDelete, iocType, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
       if (!caseObj) {
-        cb('case does not exist', null);
+        cb(`case ${caseName} does not exist`, null);
       }
       if (caseObj) {
         // it is possible that someone re-created the ioc after deleting. If so, it should be able to delete again and so on.
         _iocExistsInCurrentCaseState(caseName, iocToDelete, (iocExists) => {
-          if (!iocExists) cb('ioc already does not exist', null);
+          if (!iocExists) cb(`ioc ${iocToDelete} already does not exist`, null);
           if (iocExists) {
             _getVersion(caseName, (currentVersion) => {
             var newVersion = currentVersion + 1;
@@ -198,18 +207,16 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
 
   getCaseVersionSnapshot: function(caseName, versionNumber, cb) {
     var diffs = []
-    var versionCount = versionNumber - 100 // 100 was starting point
-    _getCaseIdAndVersionIdsByCasename(caseName, (err, caseVersionMap) => {
-      if (err) console.log('Error In fetching case id for this caseName')
+    var versionCount = versionNumber - 100 // 100 is starting point for every version number
+    _getCaseIdAndVersionIdsByCasename(caseName, versionNumber, (err, caseVersionMap) => {
+      if (err) cb(err, null)
       if (caseVersionMap) {
         var caseID = caseVersionMap.caseId
         var versionIDs = caseVersionMap.versionId.slice(0, versionCount + 1)
-        console.log(caseVersionMap)
-        console.log(versionIDs)
         db.CaseVersion.findAll({where:{caseId: caseID,  versionId:versionIDs}}).then((caseVersionObj) => {
           caseVersionObj.forEach((elem) => diffs.push(elem.diff))
           output = _processDiffs(diffs)
-          cb(output)
+          cb(null, output)
         })
       }
     })
@@ -223,49 +230,29 @@ createNewIOC: function(caseName, IOC, iocType, cb) {
   getVersionsOFCase: function() {},
 }
 
-// module.exports.getCaseVersionSnapshot("APT100", 104, (err, diff) => {
-//   console.log("diff ****************", diff);
+// module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
 //   console.log("err ****************", err);
+//   console.log("diff ****************", diff);
 // })
 
 
-module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
-  console.log("result ****************", result);
-  console.log("errr ****************", err);
+module.exports.createNewIOC("APT120", "44.exe", "file", (err, result) => {
+  module.exports.createNewIOC("APT100", "a.exe", "file", (err, result) => {
+    module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
+      module.exports.createNewIOC("APT100", "111.exe", "file", (err, result) => {
+        module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-//   module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
-//     console.log("result ****************", result);
-//     console.log("errr ****************", err);
+          module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
+            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
 
-//     module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
-//       console.log("result ****************", result);
-//       console.log("errr ****************", err);
+              module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
 
-//       module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
-//         console.log("result ****************", result);
-//         console.log("errr ****************", err);
-
-        // module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-        //   console.log("result ****************", result);
-        //   console.log("errr ****************", err);
-
-          // module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
-          //   console.log("result ****************", result);
-          //   console.log("errr ****************", err);
-
-//             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
-//               console.log("result ****************", result);
-//               console.log("errr ****************", err);
-
-              // module.exports.deleteIOC("33derder1.exe", "file", "APT101", (err, result) => {
-              //   console.log("result ****************", result);
-              //   console.log("errr ****************", err);
-              // })
-//             })
-//           })
-//         })
-//       })
-    // })
-  // })
+              })
+            })
+          })
+        })
+      })
+    })
+  })
 })
