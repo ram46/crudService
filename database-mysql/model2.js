@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('./index.js')
 
-
 var _getVersion = function(caseName, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
       caseObj.getVersions().then((versions) => {
@@ -77,7 +76,7 @@ var _getCaseIdAndVersionIdsByCasename = function(caseName, cb) {
     })
     console.log('!!!!!****** RECONTRUCTED IOCS FOR THE VERSION  ****** !!!!!!')
     console.log(output)
-    cb(output)
+    return output
   }
 
 
@@ -206,7 +205,8 @@ module.exports = {
         console.log(versionIDs)
         db.CaseVersion.findAll({where:{caseId: caseID,  versionId:versionIDs}}).then((caseVersionObj) => {
           caseVersionObj.forEach((elem) => diffs.push(elem.diff))
-          _processDiffs(diffs)
+          output = _processDiffs(diffs)
+          cb(output)
         })
       }
     })
@@ -220,50 +220,49 @@ module.exports = {
   getVersionsOFCase: function() {},
 }
 
-
-
-module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
-  console.log("result ****************", result);
-  console.log("errr ****************", err);
-
-
-  module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
-    console.log("result ****************", result);
-    console.log("errr ****************", err);
-
-    module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
-      console.log("result ****************", result);
-      console.log("errr ****************", err);
-
-      module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
-        console.log("result ****************", result);
-        console.log("errr ****************", err);
-
-        module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-          console.log("result ****************", result);
-          console.log("errr ****************", err);
-
-          module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
-            console.log("result ****************", result);
-            console.log("errr ****************", err);
-
-            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
-              console.log("result ****************", result);
-              console.log("errr ****************", err);
-
-              module.exports.deleteIOC("last.exe", "file", "APT100", (err, result) => {
-                console.log("result ****************", result);
-                console.log("errr ****************", err);
-              })
-            })
-          })
-        })
-      })
-    })
-  })
+module.exports.getCaseVersionSnapshot("APT100", 104, (err, diff) => {
+  console.log("diff ****************", diff);
+  console.log("err ****************", err);
 })
 
-// module.exports.getCaseVersionSnapshot("APT100", 104, (err, diff) => {
-//   console.log("diff ****************", diff);
-//   console.log("err ****************", err);
+
+// module.exports.createNewIOC("APT101", "33derder1.exe", "file", (err, result) => {
+//   console.log("result ****************", result);
+//   console.log("errr ****************", err);
+
+
+//   module.exports.createNewIOC("APT120", "aksdkda.exe", "file", (err, result) => {
+//     console.log("result ****************", result);
+//     console.log("errr ****************", err);
+
+//     module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
+//       console.log("result ****************", result);
+//       console.log("errr ****************", err);
+
+//       module.exports.createNewIOC("APT100", "33derder1.exe", "file", (err, result) => {
+//         console.log("result ****************", result);
+//         console.log("errr ****************", err);
+
+//         module.exports.createNewIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+//           console.log("result ****************", result);
+//           console.log("errr ****************", err);
+
+//           module.exports.updateIOC("7.7.7.7", "5.5.5.5", "IP", "APT100", (err, result) => {
+//             console.log("result ****************", result);
+//             console.log("errr ****************", err);
+
+//             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+//               console.log("result ****************", result);
+//               console.log("errr ****************", err);
+
+//               module.exports.deleteIOC("last.exe", "file", "APT100", (err, result) => {
+//                 console.log("result ****************", result);
+//                 console.log("errr ****************", err);
+//               })
+//             })
+//           })
+//         })
+//       })
+//     })
+//   })
 // })
