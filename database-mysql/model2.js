@@ -203,7 +203,24 @@ createIOC: function(caseName, IOC, iocType, cb) {
     })
   },
 
+  readIOC: function(caseName, versionNumber, cb) {
+    if (versionNumber !== 'latest') {
+      versionToRead = versionNumber;
+      module.exports.getCaseVersionSnapshot(caseName, versionNumber, (err, iocs) => {
+        if (err) cb(err, null)
+        if (iocs) cb(null, iocs)
+      });
+    }
 
+    if (versionNumber === 'latest') {
+      _getVersion( caseName, (currentVersion) => {
+        module.exports.getCaseVersionSnapshot(caseName, currentVersion, (err, iocs) => {
+          if (err) cb(err, null)
+          if (iocs) cb(null, iocs)
+        });
+      })
+    }
+  },
 
   getCaseVersionSnapshot: function(caseName, versionNumber, cb) {
     var diffs = []
@@ -222,6 +239,11 @@ createIOC: function(caseName, IOC, iocType, cb) {
     })
   },
 }
+
+module.exports.readIOC("APT100",'latest', (err, iocs) => {
+  console.log(iocs)
+  console.log(err)
+})
 
 // module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
 //   console.log("err ****************", err);
