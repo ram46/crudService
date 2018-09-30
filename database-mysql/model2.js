@@ -2,6 +2,15 @@ const Sequelize = require('sequelize');
 const db = require('./index.js')
 
 
+var _ifBSupersetOfA = function(arrA, arrB) {
+  // if all elements of A are in B and B must have some more.
+  var allElementsOfAinB = arrA.every((elem) => {
+    return (arrB.indexOf(elem) !== -1)
+  })
+  if (allElementsOfAinB && arrB.length > arrA.length) return true
+  else return false
+}
+
 
 var _getVersion = function(caseName, cb) {
 
@@ -238,12 +247,40 @@ createIOC: function(caseName, IOC, iocType, cb) {
       }
     })
   },
+
+
+  getDiffOfLastTwoVersions: function(caseName, cb) {
+    _getVersion(caseName, (currentVersion) => {
+      var previousVersion = currentVersion - 1
+      module.exports.readIOC(caseName, currentVersion, (err, currentIOCs) => {
+        module.exports.readIOC(caseName, previousVersion, (err, previousIOCs) => {
+          if (_ifBSupersetOfA(previousIOCs, currentIOCs)) {
+            var diffs = currentIOCs.filter((elem) => {
+              return (previousIOCs.indexOf(elem) === -1)
+            })
+            cb(null, diffs)
+          } else cb(`currentVersion ${currentVersion} is not superset of prev version ${previousVersion} `, null)
+        })
+      })
+    })
+  },
+
 }
 
-module.exports.readIOC("APT100",'latest', (err, iocs) => {
-  console.log(iocs)
-  console.log(err)
+
+
+
+
+
+module.exports.getDiffOfLastTwoVersions('APT100', (err, diffs) => {
+  console.log('************ --------- ========')
+  console.log(err, diffs)
 })
+
+// module.exports.readIOC("APT100",110, (err, iocs) => {
+//   console.log(iocs)
+//   console.log(err)
+// })
 
 // module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
 //   console.log("err ****************", err);
@@ -251,23 +288,23 @@ module.exports.readIOC("APT100",'latest', (err, iocs) => {
 // })
 
 
-module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
-  module.exports.createIOC("APT100", "a.exe", "file", (err, result) => {
-    module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+// module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
+//   module.exports.createIOC("APT100", "a.exe", "file", (err, result) => {
+//     module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-      module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
-        module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+//       module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
+//         module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-          module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
-            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+//           module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
+//             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
 
-              module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
+//               module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
 
-              })
-            })
-          })
-        })
-      })
-    })
-  })
-})
+//               })
+//             })
+//           })
+//         })
+//       })
+//     })
+//   })
+// })
