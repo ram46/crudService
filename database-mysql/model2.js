@@ -249,30 +249,17 @@ createIOC: function(caseName, IOC, iocType, cb) {
   },
 
 
-  getCurrentVersion: function(caseName, cb) {
-    _getVersion(caseName, (currentVersion) => {
-      cb(currentVersion)
-    })
-  },
-
-
-
   getDiffOfLastTwoVersions: function(caseName, cb) {
-
     _getVersion(caseName, (currentVersion) => {
       var previousVersion = currentVersion - 1
       module.exports.readIOC(caseName, currentVersion, (err, currentIOCs) => {
         module.exports.readIOC(caseName, previousVersion, (err, previousIOCs) => {
-
           if (_ifBSupersetOfA(previousIOCs, currentIOCs)) {
             var diffs = currentIOCs.filter((elem) => {
               return (previousIOCs.indexOf(elem) === -1)
             })
             cb(null, diffs)
-          }
-
-          else cb(`currentVersion ${currentVersion} is not superset of prev version ${previousVersion} `, null)
-
+          } else cb(`currentVersion ${currentVersion} is not superset of prev version ${previousVersion} `, null)
         })
       })
     })
