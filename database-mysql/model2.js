@@ -268,7 +268,10 @@ createIOC: function(caseName, IOC, iocType, cb) {
 }
 
 
-
+// module.exports.readIOC("APT100",'latest', (err, iocs) => {
+//   console.log(iocs)
+//   console.log(err)
+// })
 
 
 
@@ -288,23 +291,23 @@ module.exports.getDiffOfLastTwoVersions('APT100', (err, diffs) => {
 // })
 
 
-// module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
-//   module.exports.createIOC("APT100", "a.exe", "file", (err, result) => {
-//     module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
+  module.exports.createIOC("APT100", "a.exe", "file", (err, result) => {
+    module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-//       module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
-//         module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+      module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
+        module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-//           module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
-//             module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+          module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
+            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
 
-//               module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
+              module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
 
-//               })
-//             })
-//           })
-//         })
-//       })
-//     })
-//   })
-// })
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+})
