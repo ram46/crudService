@@ -240,10 +240,10 @@ createIOC: function(caseName, IOC, iocType, cb) {
   },
 }
 
-module.exports.readIOC("APT100",'latest', (err, iocs) => {
-  console.log(iocs)
-  console.log(err)
-})
+// module.exports.readIOC("APT100",'latest', (err, iocs) => {
+//   console.log(iocs)
+//   console.log(err)
+// })
 
 // module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
 //   console.log("err ****************", err);

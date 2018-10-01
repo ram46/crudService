@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var request = require('request')
 var app = express();
 var db = require('../database-mysql/model.js');
+var db2 = require('../database-mysql/model2.js');
 
 app.use(express.static(__dirname + '/../client/dist'));
 
@@ -50,12 +51,17 @@ function createioc(req, res) {
 
 
 function readioc(req, res) {
+  console.log('HEEEEEEEEEEEEEERRREEEEE in readioc crud server', req.body)
   var filter = JSON.parse(req.body.query);
   console.log('**** called /readioc')
-  db.read(filter, (error, result) => {
+  db2.readIOC(filter.caseName, filter.versionNum, (error, result) => {
     if (error) res.send(ERROR_MSG);
     if (result) res.send(result);
   })
+  // db.read(filter, (error, result) => {
+  //   if (error) res.send(ERROR_MSG);
+  //   if (result) res.send(result);
+  // })
 
 }
 
