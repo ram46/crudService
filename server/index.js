@@ -82,6 +82,27 @@ function deleteioc(req, res) {
   })
 }
 
+
+function getAllCases(req, res) {
+  db2.getAllCases((error, cases) => {
+    if (error) res.send(['no case found'])
+    else res.send(cases)
+  })
+}
+
+function getCaseVersions(req, res) {
+  console.log('***** req of getCaseVersions****')
+  var caseName = req.body.caseName
+  console.log(req.body.caseName)
+
+  db2.getCaseVersions(caseName, (error, versions) => {
+    if (error) res.send(['no version found'])
+    else res.send(versions)
+  })
+
+}
+
+
 var port = process.env.PORT || 5001;
 
 app.listen(port, function() {
