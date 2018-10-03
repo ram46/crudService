@@ -1,6 +1,28 @@
 const Sequelize = require('sequelize');
-const db = require('./index.js')
+const db = require('./index.js');
+const request = require('request');
 
+var _checkDiffAndSearchInLogs = function(caseName, cb) {
+
+  console.log('................inside _checkDiffAndSearchInLogs..............')
+  module.exports.getDiffOfLastTwoVersions(caseName, (err, IOCs) => {
+    if (IOCs) {
+      var query = `{"caseName":"${caseName}", "IOCsDiff":"${IOCs}"}`;
+
+      try {
+        request.post('http://search-node:5002/searchioc', {form:{query}}, ((err, resp, body) => {
+        // console.log(body);
+        // return body;
+          cb(null, 'done');
+        }));
+      } catch(err) {
+        cb(err, null);
+      }
+    } else {
+      cb('no additional iocs', null);
+    }
+  });
+}
 
 var _ifBSupersetOfA = function(arrA, arrB) {
   // if all elements of A are in B and B must have some more.
@@ -128,7 +150,12 @@ createIOC: function(caseName, IOC, iocType, cb) {
               var newVersion = currentVersion + 1;
               db.Version.create({number: newVersion}).then((version) => {
                 version.addCase(caseObj, {through: {diff: `{"createdIOC":"${IOC}"}`}});
+                // cb(null, "ok");
+
+                _checkDiffAndSearchInLogs(caseName, (err, result) => {
                   cb(null, "ok");
+                });
+
                 })
               })
             })
@@ -147,13 +174,16 @@ createIOC: function(caseName, IOC, iocType, cb) {
               // if ioc does not exist then create it
               db.IOC.create({ioc: IOC, type: iocType}).then((ioc) => {
                 ioc.addCase(newCase)
-
               })
             }
 
             db.Version.create({number:100}).then((version) => {
               version.addCase(newCase, {through: {diff: `{"createdIOC":"${IOC}", "createdCase":"${caseName}"}`}})
-              cb(null, "success");
+
+              // cb(null, "success");
+              _checkDiffAndSearchInLogs(caseName, (err, result) => {
+                cb(null, "ok");
+              });
             })
           })
         })
@@ -178,8 +208,12 @@ createIOC: function(caseName, IOC, iocType, cb) {
                 var newVersion = currentVersion + 1;
                 db.Version.create({number: newVersion}).then((version) => {
                   version.addCase(caseObj, {through: {diff:`{"modifiedIOC":{"from":"${fromValue}", "to":"${toValue}"}}`}});
-                  cb(null, "ok");
 
+                  // cb(null, "ok");
+
+                  _checkDiffAndSearchInLogs(caseName, (err, result) => {
+                    cb(null, "ok");
+                  });
                 })
               })
             })
@@ -265,30 +299,31 @@ createIOC: function(caseName, IOC, iocType, cb) {
     })
   },
 
+getCaseVersions: function(caseName, cb) {
+    var versions = [];
+    db.Case.find({where:{name: caseName}}).then((caseObj) => {
+      caseObj.getVersions().then((versionObj) => {
+          if (!versionObj === 0) cb('no version found', null)
+          else {
+            versionObj.forEach((elem) => versions.push(elem.number))
+            cb(null, versions)
+          }
+      })
+    })
+  },
+
+
+  getAllCases: function(cb) {
+    db.Case.findAll({}).then((caseObj) => {
+      var cases = []
+      if (!caseObj) cb('no case found', null)
+      else {
+        caseObj.forEach((elem) => cases.push(elem.name))
+        cb(null, cases)
+      }
+    })
+  }
 }
-
-
-// module.exports.readIOC("APT100",'latest', (err, iocs) => {
-//   console.log(iocs)
-//   console.log(err)
-// })
-
-
-
-module.exports.getDiffOfLastTwoVersions('APT100', (err, diffs) => {
-  console.log('************ --------- ========')
-  console.log(err, diffs)
-})
-
-// module.exports.readIOC("APT100",110, (err, iocs) => {
-//   console.log(iocs)
-//   console.log(err)
-// })
-
-// module.exports.getCaseVersionSnapshot("APT100", 109, (err, diff) => {
-//   console.log("err ****************", err);
-//   console.log("diff ****************", diff);
-// })
 
 
 module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
@@ -311,3 +346,8 @@ module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
     })
   })
 })
+
+
+
+
+
