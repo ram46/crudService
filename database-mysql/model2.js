@@ -4,21 +4,20 @@ const request = require('request');
 
 var _checkDiffAndSearchInLogs = function(caseName, cb) {
 
-  console.log('................inside _checkDiffAndSearchInLogs..............')
   module.exports.getDiffOfLastTwoVersions(caseName, (err, IOCs) => {
-    if (IOCs) {
+    if (IOCs.length > 0) {
       var query = `{"caseName":"${caseName}", "IOCsDiff":"${IOCs}"}`;
 
       try {
         request.post('http://search-node:5002/searchioc', {form:{query}}, ((err, resp, body) => {
-        // console.log(body);
-        // return body;
           cb(null, 'done');
         }));
       } catch(err) {
         cb(err, null);
       }
-    } else {
+    }
+
+    if (!IOCs || IOCs.length === 0) {
       cb('no additional iocs', null);
     }
   });
@@ -37,16 +36,17 @@ var _ifBSupersetOfA = function(arrA, arrB) {
 var _getVersion = function(caseName, cb) {
 
   db.Case.find({where:{name: caseName}}).then((caseObj) => {
+    if (caseObj === null) cb('case not found', null);
     caseObj.getVersions().then((versions) => {
       var versionNumber = versions.length - 1 + 100
-        cb(versionNumber)
+        cb(null, versionNumber)
     })
   })
 }
 
 var _iocExistsInCurrentCaseState = function(caseName, IOC, cb) {
   // get the last version of the case
-  _getVersion(caseName, (currentVersion) => {
+  _getVersion(caseName, (err, currentVersion) => {
     // recontruct and check if the last version has this ioc, if not, then create, else not.
     module.exports.getCaseVersionSnapshot(caseName, currentVersion, (err, currentState) => {
       cb(currentState.includes(IOC));
@@ -146,7 +146,7 @@ createIOC: function(caseName, IOC, iocType, cb) {
           } else {
             db.IOC.create({ioc: IOC, type: iocType}).then((ioc) => {
             ioc.addCase(caseObj)
-            _getVersion(caseName, (currentVersion) => {
+            _getVersion(caseName, (err, currentVersion) => {
               var newVersion = currentVersion + 1;
               db.Version.create({number: newVersion}).then((version) => {
                 version.addCase(caseObj, {through: {diff: `{"createdIOC":"${IOC}"}`}});
@@ -181,9 +181,11 @@ createIOC: function(caseName, IOC, iocType, cb) {
               version.addCase(newCase, {through: {diff: `{"createdIOC":"${IOC}", "createdCase":"${caseName}"}`}})
 
               // cb(null, "success");
+              console.log('whhhhhhhhhhhhhhhhhhhhhhhhhhhhatttttttttttttt');
               _checkDiffAndSearchInLogs(caseName, (err, result) => {
-                cb(null, "ok");
+                 cb(null, "ok");
               });
+
             })
           })
         })
@@ -204,16 +206,15 @@ createIOC: function(caseName, IOC, iocType, cb) {
           if (iocExists) {
             db.IOC.create({ioc: toValue, type: iocType}).then((ioc) => {
               ioc.addCase(caseObj);
-              _getVersion(caseName, (currentVersion) => {
+              _getVersion(caseName, (err, currentVersion) => {
                 var newVersion = currentVersion + 1;
                 db.Version.create({number: newVersion}).then((version) => {
                   version.addCase(caseObj, {through: {diff:`{"modifiedIOC":{"from":"${fromValue}", "to":"${toValue}"}}`}});
-
-                  // cb(null, "ok");
-
                   _checkDiffAndSearchInLogs(caseName, (err, result) => {
-                    cb(null, "ok");
+
                   });
+                  cb(null, "ok");
+
                 })
               })
             })
@@ -233,7 +234,7 @@ createIOC: function(caseName, IOC, iocType, cb) {
         _iocExistsInCurrentCaseState(caseName, iocToDelete, (iocExists) => {
           if (!iocExists) cb(`ioc ${iocToDelete} already does not exist`, null);
           if (iocExists) {
-            _getVersion(caseName, (currentVersion) => {
+            _getVersion(caseName, (err, currentVersion) => {
             var newVersion = currentVersion + 1;
             db.Version.create({number: newVersion}).then((version) => {
               version.addCase(caseObj, {through: {diff: `{"deletedIOC":"${iocToDelete}"}`}});
@@ -256,7 +257,7 @@ createIOC: function(caseName, IOC, iocType, cb) {
     }
 
     if (versionNumber === 'latest') {
-      _getVersion( caseName, (currentVersion) => {
+      _getVersion( caseName, (err, currentVersion) => {
         module.exports.getCaseVersionSnapshot(caseName, currentVersion, (err, iocs) => {
           if (err) cb(err, null)
           if (iocs) cb(null, iocs)
@@ -284,17 +285,24 @@ createIOC: function(caseName, IOC, iocType, cb) {
 
 
   getDiffOfLastTwoVersions: function(caseName, cb) {
-    _getVersion(caseName, (currentVersion) => {
+    _getVersion(caseName, (err, currentVersion) => {
+      if (err) cb(err, null);
+
       var previousVersion = currentVersion - 1
       module.exports.readIOC(caseName, currentVersion, (err, currentIOCs) => {
-        module.exports.readIOC(caseName, previousVersion, (err, previousIOCs) => {
-          if (_ifBSupersetOfA(previousIOCs, currentIOCs)) {
-            var diffs = currentIOCs.filter((elem) => {
-              return (previousIOCs.indexOf(elem) === -1)
-            })
-            cb(null, diffs)
-          } else cb(`currentVersion ${currentVersion} is not superset of prev version ${previousVersion} `, null)
-        })
+        if (currentVersion === 100) {
+          console.log('hehehhehehehhehehhehheheheh', currentIOCs)
+          cb(null, currentIOCs);
+        } else {
+          module.exports.readIOC(caseName, previousVersion, (err, previousIOCs) => {
+            if (_ifBSupersetOfA(previousIOCs, currentIOCs)) {
+              var diffs = currentIOCs.filter((elem) => {
+                return (previousIOCs.indexOf(elem) === -1)
+              })
+              cb(null, diffs)
+            } else cb(`currentVersion ${currentVersion} is not superset of prev version ${previousVersion} `, null)
+          })
+        }
       })
     })
   },
@@ -326,28 +334,35 @@ getCaseVersions: function(caseName, cb) {
 }
 
 
+// module.exports.getDiffOfLastTwoVersions('SOMECASE', (err, res) => {
+//   console.log('somecase case')
+//   console.log('err is ', err);
+//   console.log('res is ', res);
+// })
+
+
 module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
-  module.exports.createIOC("APT100", "a.exe", "file", (err, result) => {
-    module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-
-      module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
-        module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
-
-          module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
-            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
-
-              module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
-
-              })
-            })
-          })
-        })
-      })
-    })
+    // module.exports.getDiffOfLastTwoVersions('APT120', (err, res) => {
+    //   console.log('apt120 case')
+    //   console.log('err is ', err);
+    //   console.log('res is ', res);
   })
+  module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
+  //   module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+
+  //     module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
+  //       module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+
+  //         module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
+  //           module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+
+  //             module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
+
+  //             })
+  //           })
+  //         })
+  //       })
+  //     })
+  //   })
+  // })
 })
-
-
-
-
-
