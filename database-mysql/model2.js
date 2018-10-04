@@ -322,7 +322,6 @@ getCaseVersions: function(caseName, cb) {
 
 
   getAllCases: function(cb) {
-    console.log("getALLLLLLCases CALLED!!!")
     db.Case.findAll({}).then((caseObj) => {
       var cases = []
       if (!caseObj) cb('no case found', null)
