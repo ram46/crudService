@@ -20,6 +20,9 @@ app.post('/createioc', createioc)
 app.post('/readioc', readioc)
 app.post('/updateioc', updateioc)
 app.post('/deleteioc', deleteioc)
+app.get('/getAllCases', getAllCases)
+app.post('/getCaseVersions', getCaseVersions)
+
 const SUCCESS_MSG = 'transaction succeeded';
 const ERROR_MSG = 'transaction failed'
 
