@@ -322,6 +322,7 @@ getCaseVersions: function(caseName, cb) {
 
 
   getAllCases: function(cb) {
+    console.log("getALLLLLLCases CALLED!!!")
     db.Case.findAll({}).then((caseObj) => {
       var cases = []
       if (!caseObj) cb('no case found', null)
@@ -342,27 +343,23 @@ getCaseVersions: function(caseName, cb) {
 
 
 module.exports.createIOC("APT120", "44.exe", "file", (err, result) => {
-    // module.exports.getDiffOfLastTwoVersions('APT120', (err, res) => {
-    //   console.log('apt120 case')
-    //   console.log('err is ', err);
-    //   console.log('res is ', res);
-  })
+
   module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
-  //   module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+    module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-  //     module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
-  //       module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
+      module.exports.createIOC("APT100", "111.exe", "file", (err, result) => {
+        module.exports.createIOC("APT100", "7.7.7.7", "IP", (err, result) => {
 
-  //         module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
-  //           module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
+          module.exports.updateIOC("APT100", "7.7.7.7", "5.5.5.5", "IP", (err, result) => {
+            module.exports.deleteIOC("33derder1.exe", "file", "APT100", (err, result) => {
 
-  //             module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
+              module.exports.deleteIOC("APT100", "5.5.5.5", "IP", (err, result) => {
 
-  //             })
-  //           })
-  //         })
-  //       })
-  //     })
-  //   })
-  // })
+              })
+            })
+          })
+        })
+      })
+    })
+  })
 })
