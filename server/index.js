@@ -57,7 +57,7 @@ function readioc(req, res) {
   console.log('HEEEEEEEEEEEEEERRREEEEE in readioc crud server', req.body)
   var filter = JSON.parse(req.body.query);
   console.log('**** called /readioc')
-  db2.readIOC(filter.caseName, filter.versionNum, (error, result) => {
+  db2.readIOC(filter.caseName, parseInt(filter.versionNum), (error, result) => {
     if (error) res.send(ERROR_MSG);
     if (result) res.send(result);
   })
