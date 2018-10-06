@@ -27,6 +27,17 @@ try {
 }
 
 
+// try {
+//   var sequelize = new Sequelize('ioc', 'root', '', {
+//     host: 'localhost',
+//     dialect: 'mysql',
+//   });
+// }
+
+// catch(e) {
+//   console.log(e)
+// }
+
 const IOC = sequelize.define('ioc', {
   ioc: { type: Sequelize.STRING},
   type: Sequelize.STRING,
