@@ -332,7 +332,6 @@ createIOC: function(caseName, IOC, iocType, cb) {
 
 getCaseVersions: function(caseName, cb) {
     var versions = [];
-    console.log('IN GET CASEVERSIONS...', caseName)
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
       caseObj.getVersions().then((versionObj) => {
           if (!versionObj === 0) cb('no version found', null)

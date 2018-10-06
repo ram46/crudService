@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var request = require('request')
 var app = express();
 var db = require('../database-mysql/model.js');
-var db2 = require('../database-mysql/model2.js');
+// var db2 = require('../database-mysql/model2.js');
 
 app.use(express.static(__dirname + '/../client/dist'));
 

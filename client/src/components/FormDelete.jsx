@@ -46,7 +46,7 @@ class FormDelete extends CrudComponent {
 
     if (!this.state.resultView) {
       button = <Button className={this.state.buttonStatus} type='submit' id="submitBtn" onClick={this.handleClick} >Submit</Button>
-      content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange} style={this.state.textAreaStyle} control='textarea' rows='10' label='Delete IOC' placeholder='[{"id":"1213432"},{"type":"unknown"}]' /> </Form.Group> {button} </Form>
+      content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange} style={this.state.textAreaStyle} control='textarea' rows='10' label='Delete IOC' placeholder='{"caseName": "APT22", "iocToDelete": "44.exe", "iocType":"file"}' /> </Form.Group> {button} </Form>
     }
 
 
