@@ -46,7 +46,7 @@ class FormUpdate extends CrudComponent {
 
     if (!this.state.resultView) {
       button = <Button className={this.state.buttonStatus} type='submit' id="submitBtn" onClick={this.handleClick} >Submit</Button>
-      content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange} style={this.state.textAreaStyle} control='textarea' rows='10' label='Update IOC' placeholder='{"newValues": {"ioc": "88.2.2","type": "ip" }, "where": { "id": 6}}' /> </Form.Group> {button} </Form>
+      content = <Form unstackable> <Form.Group widths={2}> <Form.Input onChange={this.handleChange} style={this.state.textAreaStyle} control='textarea' rows='10' label='Update IOC' placeholder='{"caseName": "APT22", "fromValue": "44.exe", "toValue": "6.6.6.6", "iocType": "ip" }' /> </Form.Group> {button} </Form>
     }
 
 

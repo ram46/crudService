@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var request = require('request')
 var app = express();
 var db = require('../database-mysql/model.js');
-var db2 = require('../database-mysql/model2.js');
+// var db2 = require('../database-mysql/model2.js');
 
 app.use(express.static(__dirname + '/../client/dist'));
 
@@ -43,21 +43,34 @@ function monitor(req,res) {
   })
 }
 
+
+
 function createioc(req, res) {
-  iocs = JSON.parse(req.body.query);
-  console.log('in the createIOC place', iocs)
-  db.create(iocs, (error, result) => {
+  // var query = JSON.parse(req.body.query);
+  var query = req.body.query;
+  console.log('in the createIOC place', query)
+  db.create(query, (error, result) => {
     if (error) res.send(ERROR_MSG);
     if (result) res.send(SUCCESS_MSG);
   })
 }
 
+// function createioc(req, res) {
+//   iocs = JSON.parse(req.body.query);
+//   console.log('in the createIOC place', iocs)
+//   db.create(iocs, (error, result) => {
+//     if (error) res.send(ERROR_MSG);
+//     if (result) res.send(SUCCESS_MSG);
+//   })
+// }
+
 
 function readioc(req, res) {
-  console.log('HEEEEEEEEEEEEEERRREEEEE in readioc crud server', req.body)
-  var filter = JSON.parse(req.body.query);
+
+  // var filter = JSON.parse(req.body.query);
   console.log('**** called /readioc')
-  db2.readIOC(filter.caseName, parseInt(filter.versionNum), (error, result) => {
+  var query = req.body.query
+  db.read(query,(error, result) => {
     if (error) res.send(ERROR_MSG);
     if (result) res.send(result);
   })
@@ -70,8 +83,12 @@ function readioc(req, res) {
 
 
 function updateioc(req, res) {
-  var query = JSON.parse(req.body.query);
-  db.update(query.newValues, query.where, (error, result) => {
+  // var query = JSON.parse(req.body.query);
+  console.log('@@@@@@@ in UPDATE crud server', req.body)
+  var query = req.body.query
+
+  db.update(query, (error, result) => {
+
     if (error) res.send(ERROR_MSG);
     if (result) res.send(SUCCESS_MSG);
   })
@@ -79,7 +96,8 @@ function updateioc(req, res) {
 
 function deleteioc(req, res) {
   var filter = JSON.parse(req.body.query);
-  db.delete(filter, (error, result) => {
+  var query = req.body.query
+  db.delete(query, (error, result) => {
     if (error) res.send(ERROR_MSG);
     if (result) res.send(SUCCESS_MSG);
   })
@@ -87,18 +105,16 @@ function deleteioc(req, res) {
 
 
 function getAllCases(req, res) {
-  db2.getAllCases((error, cases) => {
+  db.getAllCases((error, cases) => {
     if (error) res.send(['no case found'])
     else res.send(cases)
   })
 }
 
 function getCaseVersions(req, res) {
-  console.log('***** req of getCaseVersions****')
-  var caseName = req.body.caseName
-  console.log(req.body.caseName)
-
-  db2.getCaseVersions(caseName, (error, versions) => {
+  console.log('***** req of getCaseVersions****', req.body)
+  var caseName = String(req.body.caseName)
+  db.getCaseVersions(caseName, (error, versions) => {
     if (error) res.send(['no version found'])
     else res.send(versions)
   })

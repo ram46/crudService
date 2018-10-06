@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var Sequelize = require('sequelize');
 var db = require('../../database-mysql/index.js')
-var model = require('../../database-mysql/model2.js');
+var model = require('../../database-mysql/model.js');
 
 
 describe('Connection to DB', () => {

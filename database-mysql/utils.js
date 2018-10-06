@@ -203,13 +203,17 @@ createIOC: function(caseName, IOC, iocType, cb) {
 
  updateIOC: function(caseName, fromValue, toValue, iocType, cb) {
     db.Case.find({where:{name: caseName}}).then((caseObj) => {
+    console.log('INSIDE UPDATE ***** !caseOjb')
     if (!caseObj) {
+      console.log('INSIDE UPDATE ***** !caseOjb')
       cb(`case ${caseName} does not exist`, null);
     }
 
     if (caseObj) {
+       console.log('INSIDE UPDATE ***** caseOjb')
+
        _iocExistsInCurrentCaseState(caseName, fromValue, (err, iocExists) => {
-          if (!iocExists) cb('no ioc found tomodify', null);
+          if (!iocExists) cb('no ioc found to modify', null);
           if (iocExists) {
             db.IOC.create({ioc: toValue, type: iocType}).then((ioc) => {
               ioc.addCase(caseObj);
@@ -311,7 +315,6 @@ createIOC: function(caseName, IOC, iocType, cb) {
       var previousVersion = currentVersion - 1
       module.exports.readIOC(caseName, currentVersion, (err, currentIOCs) => {
         if (currentVersion === 100 && currentIOCs) {
-          console.log('hehehhehehehhehehhehheheheh', currentIOCs)
           cb(null, currentIOCs);
         } else {
           module.exports.readIOC(caseName, previousVersion, (err, previousIOCs) => {
