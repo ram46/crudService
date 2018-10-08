@@ -25,7 +25,18 @@ app.post('/getCaseVersions', getCaseVersions)
 
 const SUCCESS_MSG = 'transaction succeeded';
 const ERROR_MSG = 'transaction failed'
-const BROWN_TOPIC_ARN = 'arn:aws:sns:us-east-1:977163535489:brown-sms';
+var BROWN_TOPIC_ARN = '';
+
+snsUtil.createOrGetTopic('brown_sns')
+.then( (topicARN) => {
+  BROWN_TOPIC_ARN = topicARN;
+  return topicARN
+})
+.then( (topicARN) => {
+  snsUtil.subscribeSMS(topicARN, '+1xxxxxxxxxx')
+  snsUtil.subscribeEmail(topicARN, 'xxxxxx@xxxxx.com');
+})
+
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
   API Route Functions

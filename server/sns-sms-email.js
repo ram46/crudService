@@ -18,49 +18,79 @@ var AWS = require('aws-sdk');
 AWS.config.update({region: 'us-east-1'});
 
 var sns = new AWS.SNS();
-var brownTopic = 'arn:aws:sns:us-east-1:977163535489:brown-sms';
+var TOPIC_ARN = '';
 
 module.exports = {
 
-  subscribeSMS: function(topic, phoneNumber) {
-    var params = {
-      Protocol: 'sms',
-      TopicArn: topic,
-      Endpoint: phoneNumber,
-      ReturnSubscriptionArn: true || false
-    };
+  createOrGetTopic: function(topicName) {
+    return new Promise( (resolve, reject) => {
+      var params = {
+        Name: topicName,
+      }
+      sns.createTopic(params, (err, data) => {
+        if (err) reject(err);
+        else resolve(data.TopicArn);
+      })
+    })
+  },
 
-    sns.subscribe(params, function(err, data) {
-      if (err) console.log(err, err.stack);
-      else     console.log(data);
-    });
+
+  subscribeSMS: function(topic, phoneNumber) {
+
+    return new Promise( (resolve, reject) => {
+      var params = {
+        Protocol: 'sms',
+        TopicArn: topic,
+        Endpoint: phoneNumber,
+        ReturnSubscriptionArn: true || false
+      };
+
+      sns.subscribe(params, function(err, data) {
+        if (err) reject(err, err.stack);
+        else     resolve(data);
+      })
+    })
   },
 
 
   subscribeEmail: function(topic, email) {
-    var params = {
-      Protocol: 'Email',
-      TopicArn: topic,
-      Endpoint: email,
-      ReturnSubscriptionArn: true || false
-    };
+    return new Promise( (resolve, reject) => {
+      var params = {
+        Protocol: 'Email',
+        TopicArn: topic,
+        Endpoint: email,
+        ReturnSubscriptionArn: true || false
+      };
 
-    sns.subscribe(params, function(err, data) {
-      if (err) console.log(err, err.stack);
-      else     console.log(data);
-    });
+      sns.subscribe(params, function(err, data) {
+        if (err) reject(err, err.stack);
+        else     resolve(data);
+      });
+    })
+  },
+
+
+  getSubscriptionsByTopic: function(topic) {
+    return new Promise( (resolve, reject) => {
+       var params = {
+        TopicArn: topic,
+      };
+      sns.listSubscriptionsByTopic(params, function(err, data) {
+        if (err) reject(err, err.stack);
+        else     resolve(data);
+      })
+    })
   },
 
   unsubscribe: function(topic, endpoint) {
-    var params = {
-      TopicArn: topic,
-    };
 
-    sns.listSubscriptionsByTopic(params, function(err, data) {
-      if (err) console.log(err, err.stack);
+    return new Promise( (resolve, reject) => {
+      var params = {
+        TopicArn: topic,
+      };
 
-      else {
-
+      module.exports.getSubscriptionsByTopic(topic)
+      .then( (data) => {
         data.Subscriptions.forEach( (topicObj) => {
           if (topicObj.TopicArn === topic && topicObj.Endpoint === endpoint) {
 
@@ -69,76 +99,112 @@ module.exports = {
             };
 
             sns.unsubscribe(params, function(err, data) {
-              if (err) console.log(err, err.stack);
-              else     console.log(data);
+              if (err) reject(err, err.stack);
+              else     resolve(data);
             });
           }
         })
-      }
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    })
   },
 
   publish: function(topic, smsMsg, emailMsg) {
-    var params = {
-      Message: JSON.stringify({
-        "default": "to all email & sms subscribers",
-        "email": emailMsg,
-        "sms": smsMsg
-      }),
-      Subject: 'brown',
-      TopicArn: topic,
-      MessageStructure: 'json'
-    };
-    sns.publish(params, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log(data);           // successful response
-    });
+    return new Promise( (resolve, reject) => {
+      var params = {
+        Message: JSON.stringify({
+          "default": "to all email & sms subscribers",
+          "email": emailMsg,
+          "sms": smsMsg
+        }),
+        Subject: 'brown',
+        TopicArn: topic,
+        MessageStructure: 'json'
+      };
+      sns.publish(params, function(err, data) {
+        if (err) reject(err, err.stack);
+        else     resolve(data);
+      });
+    })
+
   },
-
-  checkSubscription: function(topic) {
-    var params = {
-      TopicArn: topic, /* required */
-    };
-
-    sns.listSubscriptionsByTopic(params, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log(data);           // successful response
-
-    });
-  }
 
 }
 
 
+// module.exports.createOrGetTopic('brrrr')
+// .then( (topicARN) => {
+//   TOPIC_ARN = topicARN;
+//   return topicARN
+// })
 
-// module.exports.publish(brownTopic, '');
-
-// console.log('........checking subscriptions..........')
-// module.exports.checkSubscription(brownTopic);
-
-// console.log('..............subscribing SMS...............')
-// module.exports.subscribeSMS(brownTopic, '+14087699443');
-
-// module.exports.subscribeEmail(brownTopic, 'khizra6@gmail.com');
-
-// console.log('........checking subscriptions again..........')
-// module.exports.checkSubscription(brownTopic);
-
-
-// console.log('..............publishing and should get a msg...............')
-// module.exports.publish(brownTopic, 'before unsubs');
-
-// console.log('..............Un-subscribing...............')
-// module.exports.unsubscribe(brownTopic, '+14087699443');
-
-
-// console.log('........checking subscriptions one more time..........')
-// module.exports.checkSubscription(brownTopic);
-
-
-// console.log('........publishing but should NOT get msg..........')
-// module.exports.publish(brownTopic, 'after unsubs');
-
+// module.exports.createOrGetTopic('brrrr')
+// .then( (topicARN) => {
+//   TOPIC_ARN = topicARN;
+//   return topicARN
+// })
+// .then( () => {
+//   module.exports.getSubscriptionsByTopic(TOPIC_ARN)
+//   .then( (result) => {
+//     console.log('in getSubscriptionsByTopic *', result)
+//   })
+//   .then( () => {
+//     module.exports.subscribeSMS(TOPIC_ARN, '+1xxxxxxxxxxx')
+//     .then((result) => {
+//       console.log('in subscribeSMS ', result);
+//     })
+//     .then( () => {
+//       module.exports.publish(TOPIC_ARN, 'hehe', 'haha')
+//       .then ( (result) => {
+//         console.log('in publish ', result);
+//       })
+//       .then( () => {
+//         module.exports.getSubscriptionsByTopic(TOPIC_ARN)
+//         .then( (result) => {
+//           console.log('in getSubscriptionsByTopic ** ', result)
+//         })
+//         .then( () => {
+//           module.exports.subscribeEmail(TOPIC_ARN, 'xxxxx@xxxx.com')
+//           .then((result) => {
+//             console.log('in subscribeEmail ', result)
+//           })
+//           .then( () => {
+//             module.exports.getSubscriptionsByTopic(TOPIC_ARN)
+//             .then( (result) => {
+//               console.log('in getSubscriptionsByTopic ***', result)
+//             })
+//             .then( () => {
+//               module.exports.publish(TOPIC_ARN, 'moon', 'sun')
+//               .then ( (result) => {
+//                 console.log('in publish ', result);
+//               })
+//               .then( () => {
+//                 module.exports.unsubscribe(TOPIC_ARN, '+1xxxxxxxxxxx')
+//                 .then( (result) => {
+//                   console.log('in unsubscribe ', result)
+//                 })
+//                 .then( () => {
+//                   module.exports.unsubscribe(TOPIC_ARN, 'xxxxx@xxxx.com')
+//                   .then( (result) => {
+//                     console.log('in unsubscribe ', result)
+//                   })
+//                   .then( () => {
+//                     module.exports.getSubscriptionsByTopic(TOPIC_ARN)
+//                       .then( (result) => {
+//                         console.log('in getSubscriptionsByTopic after unsubscribe ****', result)
+//                       })
+//                     })
+//                   })
+//                 })
+//               })
+//             })
+//           })
+//         })
+//       })
+//     })
+//   })
 
 
 
