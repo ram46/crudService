@@ -1,12 +1,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var request = require('request')
-var app = express();
+var request = require('request');
 var db = require('../database-mysql/model.js');
-// var db2 = require('../database-mysql/model2.js');
+var snsUtil = require('./sns-sms-email.js')
+
+var app = express();
 
 app.use(express.static(__dirname + '/../client/dist'));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -25,6 +25,7 @@ app.post('/getCaseVersions', getCaseVersions)
 
 const SUCCESS_MSG = 'transaction succeeded';
 const ERROR_MSG = 'transaction failed'
+const BROWN_TOPIC_ARN = 'arn:aws:sns:us-east-1:977163535489:brown-sms';
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
   API Route Functions
@@ -44,14 +45,16 @@ function monitor(req,res) {
 }
 
 
-
 function createioc(req, res) {
   // var query = JSON.parse(req.body.query);
   var query = req.body.query;
   console.log('in the createIOC place', query)
   db.create(query, (error, result) => {
     if (error) res.send(ERROR_MSG);
-    if (result) res.send(SUCCESS_MSG);
+    if (result) {
+      snsUtil.publish(BROWN_TOPIC_ARN, 'New IOC has been created', 'New IOC has been created just now. Please investigate');
+      res.send(SUCCESS_MSG);
+    }
   })
 }
 
@@ -66,7 +69,6 @@ function createioc(req, res) {
 
 
 function readioc(req, res) {
-
   // var filter = JSON.parse(req.body.query);
   console.log('**** called /readioc')
   var query = req.body.query
@@ -83,14 +85,14 @@ function readioc(req, res) {
 
 
 function updateioc(req, res) {
-  // var query = JSON.parse(req.body.query);
-  console.log('@@@@@@@ in UPDATE crud server', req.body)
-  var query = req.body.query
-
+  var query = req.body.query;
   db.update(query, (error, result) => {
 
     if (error) res.send(ERROR_MSG);
-    if (result) res.send(SUCCESS_MSG);
+    if (result) {
+      snsUtil.publish(BROWN_TOPIC_ARN, 'An IOC has been updated', 'An IOC has been updated just now. Please investigate');
+      res.send(SUCCESS_MSG);
+    }
   })
 }
 
@@ -112,13 +114,11 @@ function getAllCases(req, res) {
 }
 
 function getCaseVersions(req, res) {
-  console.log('***** req of getCaseVersions****', req.body)
   var caseName = String(req.body.caseName)
   db.getCaseVersions(caseName, (error, versions) => {
     if (error) res.send(['no version found'])
     else res.send(versions)
-  })
-
+  });
 }
 
 
