@@ -29,7 +29,7 @@ class CrudComponent extends React.Component {
     try {
       JSON.parse(input)
       this.setState({
-        textAreaStyle: {border: '1px solid #009933'},
+        textAreaStyle: {border: '1px solid #009933', color: 'green'},
         buttonStatus: 'enabled'
       })
     }
