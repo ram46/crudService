@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import Monitor from './Monitor.jsx';
 import BrownGrid from './BrownGrid.jsx'
 
 class App extends React.Component {
@@ -18,7 +17,6 @@ class App extends React.Component {
   render() {
     return (<div>
       <BrownGrid />
-      <Monitor /> {/* ServiceRegistry service should run else give error*/}
     </div>)
   }
 }
