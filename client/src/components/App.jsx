@@ -15,9 +15,9 @@ class App extends React.Component {
   }
 
   render() {
-  var logo = <img src="https://localhost:7777/brownlogo.png" height="200" width="400"/>
-    return (<div>
-      {logo}
+    return (
+
+    <div>
       <BrownGrid />
     }
     </div>)
