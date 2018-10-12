@@ -1,104 +1,14 @@
-const IOC = require('./index.js').IOC
+const db = require('./model.js');
 
+db.create(JSON.stringify({"caseName":"APT120", "ioc": "44.exe", "ioctype":"file"}), () => {})
+db.create(JSON.stringify({"caseName":"APT100", "ioc": "111.exe","ioctype": "file"}), () => {})
+db.create(JSON.stringify({"caseName":"APT100", "ioc": "7.7.7.7","ioctype": "ip"}), () => {})
+db.create(JSON.stringify({"caseName":"APT100", "ioc": "111.exe","ioctype": "file"}), () => {})
+db.create(JSON.stringify({"caseName":"APT100", "ioc": "7.8.8.7","ioctype": "ip"}), () => {})
+db.create(JSON.stringify({"caseName":"APT222", "ioc": "unquwe", "ioctype":"string"}), () => {})
+db.create(JSON.stringify({"caseName":"APT101", "ioc": "cbwme", "ioctype":"string"}), () => {})
+db.create(JSON.stringify({"caseName":"APT005", "ioc": "12.31.32.12", "ioctype":"ip"}), () => {})
 
-IOC.sync();
-
-
-IOC.bulkCreate([
-  { ioc: 'kavkazcentr.info',
-    type: 'domain',
-    analyst: 'john',
-    notes: 'DnsEntryItem',
-    case: 'APT28',
-    version: 1
-  },
-
-  { ioc: 'rnil.am',
-    type: 'domain',
-    analyst: 'james',
-    notes: 'DnsEntryItem',
-    case: 'APT28',
-    version: 1
-  },
-
-
-  { ioc: 'n0vinite.com',
-    type: 'domain',
-    analyst: 'john',
-    notes: 'DnsEntryItem',
-    case: 'APT28',
-    version: 1
-  },
-
-
-  { ioc: 'poczta.mon.q0v.pl',
-    type: 'domain',
-    analyst: 'maya',
-    notes: 'DnsEntryItem',
-    case: 'APT28',
-    version: 1
-  },
-
-
-  { ioc: 'Microsoft\MediaPlayer\{E6696105-E63E-4EF1-939E-15DDD83B669A}',
-    type: 'registry',
-    analyst: 'nabeela',
-    notes: 'RegistryItem',
-    case: 'APT28',
-    version: 1
-  },
-
-
-  { ioc: '062fe1336459a851bd0ea271bb2afe35',
-    type: 'file',
-    analyst: 'john',
-    notes: 'FileItem/Md5sum',
-    case: 'APT30',
-    version: 1
-  },
-
-
-  { ioc: '2.2.21.1',
-    type: 'ip',
-    analyst: 'Jeo',
-    notes: 'IPv4',
-    case: 'Bearz',
-    version: 1
-  },
-
-
-  { ioc: '1.2.1.1',
-    type: 'ip',
-    analyst: 'Joel',
-    notes: 'IPv4',
-    case: 'Bearz',
-    version: 1
-  },
-
-  { ioc: 'smigroup-online.co.uk',
-    type: 'domain',
-    analyst: 'john',
-    notes: 'DnsEntryItem',
-    case: 'APT28',
-    version: 1
-  },
-
-  { ioc: '3b0ecd011500f61237c205834db0e13a',
-    type: 'file',
-    analyst: 'mkr',
-    notes: 'FileItem/Md5sum',
-    case: 'APT28',
-    version: 1
-  }],
-
-)
-.then(function(user) {
-    console.log('success');
-})
-.catch(function(err) {
-    console.log('Oh!!!', err);
-});
-
-// IOC.drop()
-
-
+db.update(JSON.stringify({"caseName":"APT222", "fromValue": "unquwe", "toValue":"unquew", "iocType": "string"}), () => {})
+db.update(JSON.stringify({"caseName":"APT100", "fromValue": "7.7.7.7","toValue": "5.5.5.5", "iocType": "ip"}), () => {})
+db.delete(JSON.stringify({"caseName":"APT100", "ioc": "7.8.8.7", "iocType":"11.exe"}), () => {})
