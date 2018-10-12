@@ -24,17 +24,7 @@ app.post('/getCaseVersions', getCaseVersions)
 
 const SUCCESS_MSG = 'transaction succeeded';
 const ERROR_MSG = 'transaction failed'
-// var BROWN_TOPIC_ARN = '';
 
-// snsUtil.createOrGetTopic('brown_sns')
-// .then( (topicARN) => {
-//   BROWN_TOPIC_ARN = topicARN;
-//   return topicARN
-// })
-// .then( (topicARN) => {
-//   snsUtil.subscribeSMS(topicARN, '+1xxxxxxxxxx')
-//   snsUtil.subscribeEmail(topicARN, 'xxxxxx@xxxxx.com');
-// })
 
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -48,27 +38,21 @@ function restrict() {
 }
 
 
-
 function createioc(req, res) {
-  // var query = JSON.parse(req.body.query);
   var query = req.body.query;
-  console.log('in the createIOC place', query)
   db.create(query, (error, result) => {
-    if (error) res.send(ERROR_MSG);
+    if (error) res.end(ERROR_MSG);
     if (result) {
-      request('http://crud-node:5001/snsPublish', ((err, resp, body) => {
-
-      // snsUtil.publish(BROWN_TOPIC_ARN, 'New IOC has been created', 'New IOC has been created just now. Please investigate');
+      request('http://email-node:5004/snsPublish', ((err, resp, body) => {
+        res.end(SUCCESS_MSG);
       }))
     }
-    res.send(SUCCESS_MSG);
+
   })
 }
 
 
 function readioc(req, res) {
-  // var filter = JSON.parse(req.body.query);
-  console.log('**** called /readioc')
   var query = req.body.query
   db.read(query,(error, result) => {
     if (error) res.send(ERROR_MSG);
@@ -81,15 +65,15 @@ function readioc(req, res) {
 function updateioc(req, res) {
   var query = req.body.query;
   db.update(query, (error, result) => {
-
-    if (error) res.send(ERROR_MSG);
+    if (error) res.end(ERROR_MSG);
     if (result) {
-      request('http://crud-node:5001/snsPublish', ((err, resp, body) => {
-
-      // snsUtil.publish(BROWN_TOPIC_ARN, 'New IOC has been created', 'New IOC has been created just now. Please investigate');
+      request('http://email-node:5004/snsPublish', ((err, resp, body) => {
+        console.log(body)
+        res.end(SUCCESS_MSG);
       }))
+
     }
-    res.send(SUCCESS_MSG);
+
   })
 }
 
