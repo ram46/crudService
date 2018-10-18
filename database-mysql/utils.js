@@ -349,11 +349,12 @@ getCaseVersions: function(caseName, cb) {
       var cases = []
       if (!caseObj) cb('no case found', null)
       else {
-        caseObj.forEach((elem) => cases.push(elem.name))
+        caseObj.forEach((elem) => cases.push([elem.name, elem.createdAt, elem.updatedAt]))
         cb(null, cases)
       }
     })
   }
+
 }
 
 
