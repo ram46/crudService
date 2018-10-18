@@ -353,6 +353,24 @@ getCaseVersions: function(caseName, cb) {
         cb(null, cases)
       }
     })
+  },
+
+
+  getCaseActivities: function(cb) {
+    var result = [];
+    var event;
+    db.Case.findAll().then( (cases) => {
+     cases.forEach( (caseObj) => { db.CaseVersion.find({where:{caseId: caseObj.id}})
+        .then( (caseVerObj)  => {
+          db.Version.find({where: {id: caseVerObj.versionId}})
+          .then( (verObj) => {
+            event = {"diff": caseVerObj.diff, "createdAt": caseVerObj.createdAt, "updatedAt":caseVerObj.updatedAt, "case": caseObj.name, "version": verObj.number}
+            result.push(event);
+            if (cases.length === result.length) cb(result)
+          })
+        })
+      })
+    })
   }
 
 }

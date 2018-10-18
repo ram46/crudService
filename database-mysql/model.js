@@ -69,6 +69,13 @@ module.exports = {
       if (err) cb(err, null)
       else cb(null, caseVersions)
     })
+  },
+
+
+  getCaseActivities: function(cb) {
+    utils.getCaseActivities( (data) => {
+      cb(data)
+    })
   }
 }
 

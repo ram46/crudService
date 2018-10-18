@@ -21,9 +21,11 @@ app.post('/updateioc', updateioc)
 app.post('/deleteioc', deleteioc)
 app.get('/getAllCases', getAllCases)
 app.post('/getCaseVersions', getCaseVersions)
+app.get('/getCaseActivities', getCaseActivities)
+
 
 const SUCCESS_MSG = 'transaction succeeded';
-const ERROR_MSG = 'transaction failed'
+const ERROR_MSG = 'transaction failed';
 
 
 
@@ -100,6 +102,14 @@ function getCaseVersions(req, res) {
     if (error) res.send(['no version found'])
     else res.send(versions)
   });
+}
+
+
+function getCaseActivities(req, res) {
+  db.getCaseActivities( (result) => {
+    result = JSON.stringify(result);
+    res.end(result);
+  })
 }
 
 
