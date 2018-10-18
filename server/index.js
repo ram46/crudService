@@ -106,9 +106,10 @@ function getCaseVersions(req, res) {
 
 
 function getCaseActivities(req, res) {
-  db.getCaseActivities( (result) => {
+  db.getCaseActivities( (err, result) => {
     result = JSON.stringify(result);
-    res.end(result);
+    if (err) res.end(err);
+    if (result) res.end(result);
   })
 }
 
