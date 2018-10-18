@@ -69,6 +69,14 @@ module.exports = {
       if (err) cb(err, null)
       else cb(null, caseVersions)
     })
+  },
+
+
+  getCaseActivities: function(cb) {
+    utils.getCaseActivities( (err, data) => {
+      if (err) cb('issue in getting data from db', nulll);
+      if (data) cb(null, data);
+    })
   }
 }
 
