@@ -22,6 +22,7 @@ app.post('/deleteioc', deleteioc)
 app.get('/getAllCases', getAllCases)
 app.post('/getCaseVersions', getCaseVersions)
 app.get('/getCaseActivities', getCaseActivities)
+app.get('/getAllCasesWithTimeStamps',  getAllCasesWithTimeStamps)
 
 
 const SUCCESS_MSG = 'transaction succeeded';
@@ -113,6 +114,13 @@ function getCaseActivities(req, res) {
   })
 }
 
+function  getAllCasesWithTimeStamps(req, res) {
+  db.getAllCasesWithTimeStamps((err, result) => {
+    if (err) res.end(err);
+    if (result) res.end(JSON.stringify(result));
+
+  })
+}
 
 var port = process.env.PORT || 5001;
 
