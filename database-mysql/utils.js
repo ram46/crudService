@@ -357,28 +357,56 @@ getCaseVersions: function(caseName, cb) {
 
 
   getCaseActivities: function(cb) {
+
     var result = [];
     var event;
-    db.Case.findAll().then( (cases) => {
-     cases.forEach( (caseObj) => { db.CaseVersion.find({where:{caseId: caseObj.id}})
-        .then( (caseVerObj)  => {
-          db.Version.find({where: {id: caseVerObj.versionId}})
-          .then( (verObj) => {
-            event = {"diff": caseVerObj.diff, "createdAt": caseVerObj.createdAt, "updatedAt":caseVerObj.updatedAt, "case": caseObj.name, "version": verObj.number}
-            result.push(event);
-            if (cases.length === result.length) {
+
+    db.CaseVersion.findAll().then((caseVerObjects) => {
+      caseVerObjects.forEach( (caseVerObj) => {
+        db.Case.find({where: {id: caseVerObj.caseId}}).then( (caseObj) => {
+          db.Version.find({where: {id: caseVerObj.versionId}}).then( (verObj) => {
+            event = {"caseName": caseObj.name, "version": verObj.number, "diff": caseVerObj.diff, "createdAt":caseVerObj.createdAt, "updatedAt": caseVerObj.updatedAt}
+            result.push(event)
+            console.log("*********")
+            console.log(JSON.stringify(result))
+            if (caseVerObjects.length === result.length) {
               cb(null, result)
             } else {
               cb('length mismatch', null)
             }
-
           })
         })
       })
     })
   }
-
 }
+
+
+  //   db.IOC.findAll().then( (iocs) => {
+  //     iocs.forEach( (iocObj) => {
+  //       // console.log(iocObj)
+  //       db.CaseIOC.find({where: {iocId: iocObj.id}}).then( (caseIOCObj) => {
+  //         db.CaseVersion.find( {where: {caseId: caseIOCObj.caseId}}).then( (caseVerObj) => {
+  //           db.Case.find({where: {id: caseVerObj.caseId}}).then( (caseObj) => {
+  //             db.Version.find({ where: {id: caseVerObj.versionId}}).then( (verObj) => {
+  //               event = {"caseName":caseObj.name, "version": verObj.number, "diff": caseVerObj.diff, "createdAt":caseVerObj.createdAt, "updatedAt": caseVerObj.updatedAt}
+
+  //               result.push(event)
+  //               console.log("*********")
+  //               var resultParsed = JSON.stringify(result)
+  //               if (iocs.length === result.length) {
+  //                 cb(null, resultParsed)
+  //               } else {
+  //                 cb('length mismatch', null)
+  //               }
+  //             })
+  //           })
+  //         })
+  //       })
+  //     })
+  //   })
+  // }
+// }
 
 
 // module.exports.getDiffOfLastTwoVersions('SOMECASE', (err, res) => {
