@@ -344,17 +344,17 @@ getCaseVersions: function(caseName, cb) {
   },
 
 
+
   getAllCases: function(cb) {
     db.Case.findAll({}).then((caseObj) => {
       var cases = []
       if (!caseObj) cb('no case found', null)
       else {
-        caseObj.forEach((elem) => cases.push([elem.name, elem.createdAt, elem.updatedAt]))
+        caseObj.forEach((elem) => cases.push(elem.name))
         cb(null, cases)
       }
     })
   },
-
 
   getCaseActivities: function(cb) {
     var result = [];
@@ -376,8 +376,28 @@ getCaseVersions: function(caseName, cb) {
         })
       })
     })
-  }
+  },
 
+
+
+ getAllCasesWithTimeStamps: function(cb) {
+      var casesWithTimestamps = [];
+      db.Case.findAll({}).then((cases) => {
+      if (cases.length === 0 || !cases) cb('no case found', null)
+      else {
+        cases.forEach((caseObj) => {
+          var versionIds = []
+          db.CaseVersion.findAll({where: {caseId: caseObj.id}}).then((versions) => {
+            versions.forEach((versionObj) => { versionIds.push([versionObj.id, versionObj.updatedAt ])})
+            casesWithTimestamps.push([ caseObj.name, caseObj.createdAt, versionIds[versionIds.length -1 ][1] ])
+            if (cases.length === casesWithTimestamps.length) {
+              cb(null, casesWithTimestamps)
+            }
+          })
+        })
+      }
+    })
+  }
 }
 
 

@@ -73,8 +73,15 @@ module.exports = {
 
 
   getCaseActivities: function(cb) {
-    utils.getCaseActivities( (err, data) => {
-      if (err) cb('issue in getting data from db', nulll);
+    utils.getCaseActivities((err, data) => {
+      if (err) cb('issue in getting data from db', null);
+      if (data) cb(null, data);
+    })
+  },
+
+  getAllCasesWithTimeStamps: function(cb) {
+    utils.getAllCasesWithTimeStamps((err, data) => {
+      if (err) cb('issue in getting data from db', null);
       if (data) cb(null, data);
     })
   }
