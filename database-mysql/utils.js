@@ -403,32 +403,6 @@ getCaseVersions: function(caseName, cb) {
 }
 
 
-  //   db.IOC.findAll().then( (iocs) => {
-  //     iocs.forEach( (iocObj) => {
-  //       // console.log(iocObj)
-  //       db.CaseIOC.find({where: {iocId: iocObj.id}}).then( (caseIOCObj) => {
-  //         db.CaseVersion.find( {where: {caseId: caseIOCObj.caseId}}).then( (caseVerObj) => {
-  //           db.Case.find({where: {id: caseVerObj.caseId}}).then( (caseObj) => {
-  //             db.Version.find({ where: {id: caseVerObj.versionId}}).then( (verObj) => {
-  //               event = {"caseName":caseObj.name, "version": verObj.number, "diff": caseVerObj.diff, "createdAt":caseVerObj.createdAt, "updatedAt": caseVerObj.updatedAt}
-
-  //               result.push(event)
-  //               console.log("*********")
-  //               var resultParsed = JSON.stringify(result)
-  //               if (iocs.length === result.length) {
-  //                 cb(null, resultParsed)
-  //               } else {
-  //                 cb('length mismatch', null)
-  //               }
-  //             })
-  //           })
-  //         })
-  //       })
-  //     })
-  //   })
-  // }
-// }
-
 
 // module.exports.getDiffOfLastTwoVersions('SOMECASE', (err, res) => {
 //   console.log('somecase case')
