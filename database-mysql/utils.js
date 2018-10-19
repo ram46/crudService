@@ -358,10 +358,9 @@ getCaseVersions: function(caseName, cb) {
 
   getCaseActivities: function(cb) {
 
-    var result = [];
-    var event;
-
     db.CaseVersion.findAll().then((caseVerObjects) => {
+      var result = [];
+      var event;
       caseVerObjects.forEach( (caseVerObj) => {
         db.Case.find({where: {id: caseVerObj.caseId}}).then( (caseObj) => {
           db.Version.find({where: {id: caseVerObj.versionId}}).then( (verObj) => {
@@ -371,8 +370,6 @@ getCaseVersions: function(caseName, cb) {
             console.log(JSON.stringify(result))
             if (caseVerObjects.length === result.length) {
               cb(null, result)
-            } else {
-              cb('length mismatch', null)
             }
           })
         })
